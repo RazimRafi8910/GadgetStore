@@ -1,0 +1,41 @@
+body{
+    margin: 0;
+    padding: 0;
+}
+
+.subheading{
+    color: rgb(0, 0, 0);
+}
+
+.a{
+    color: aqua;
+}
+
+hr{
+    opacity: 1;
+    border-color: black;
+}
+
+#sidebar-color{
+    background-color: rgba(185, 185, 185, 1);
+}
+
+.sidebar-item:hover{
+    background-color: black;
+}
+
+.second-heading{
+    color: rgba(89, 89, 89, 1);
+}
+.third-heading{
+    color: rgba(138, 138, 138, 1);
+}
+
+.adminside{
+    color: black;
+}
+
+.adminside:hover{
+    background-color: rgb(45, 45, 45);
+    color: rgb(255, 255, 255);
+}

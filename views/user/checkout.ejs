@@ -1,0 +1,165 @@
+<%- include('../partials/header.ejs') %>
+    <%- include('../partials/user-navbar.ejs') %>
+
+      
+      <section class="bg-light py-5">
+        <div class="container">
+          <div class="row">
+            
+                <h1 class="mb-0">Checkout</h1>
+                <hr class="mt-0">
+
+            <div class="col-xl-8 col-lg-8 mb-4">
+      
+              <!-- Checkout -->
+              <div class="card shadow-0 border">
+                <div class="p-4">
+                  <form action="/order/<%= userCart._id %>/create" method="post">
+                  <h5 class="card-title mb-2">Address</h5>
+                  <hr class="my-2" />
+                  <div class="row mb-3">
+                    <% if(userAddress.length <= 0) { %>
+                      <h5>You dont have address</h5>
+                      <div class="col-lg-4 mb-5 mt-2">
+                        <a href="/address/<%= user._id %>/add" class="btn btn-outline-dark">Add new address</a>
+                    </div>
+                      
+                      <% } else { %>
+                    <% userAddress.forEach(function(address){ %>
+                    <div class="col-lg-6 mb-3">
+                        <!-- Default checked radio -->
+                        <div class="form-check h-100 border rounded-3">
+                          <div class="p-3">
+                            <input class="form-check-input mt-3" type="radio" name="addressId" value="<%= address._id %>" id="flexRadioDefault1" checked />
+                            <label class="form-check-label text-wrap" for="flexRadioDefault1">
+                              <p class="fs-4 m-0 fw-bold"><%= address.houseName %></p>
+                              <p class="mb-1 text-muted"><%= address.address %>,<%= address.town %>,<br><%= address.city %>,<%= address.state %></p>
+                              <p><%= address.pincode %></p>
+                              <small class="text-muted"><%= address.addressType %></small>
+                            </label>
+                          </div>
+                        </div>
+                      </div>    
+                      <% }) }%>
+                  </div>
+      
+                  <h5 class="card-title mb-2">Payment Method</h5>
+                  <hr class="my-2" />
+                  <div class="row mb-3">
+                    <div class="col-lg-6 my-3">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="paymentMethod" id="inlineRadio1" value="cashOnDelivery" checked>
+                            <label class="form-check-label" for="inlineRadio1">Cash on Delivery</label>
+                          </div>
+                    </div>
+                    <div class="col-lg-6 my-3">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="paymentMethod" id="inlineRadio2" value="onlinePayment" >
+                            <label class="form-check-label" for="inlineRadio2">Online Payment</label>
+                          </div>
+                    </div>
+                    
+                  </div>
+                  <h5 class="card-title mb-2">Wallet</h5>
+                  <hr class="my-2" />
+                  <div class="row mb-3">
+                    <% if( message.error ) { %>
+                      <div class="alert alert-danger" role="alert">
+                          <%= message.error %>
+                        </div>
+                        <% } %>
+                    <% if(userWallet) {%>
+                    <div class="col-lg-6 mt-3 mb-">
+                      <p  class="text-muted mb-2">Balance : <span class="text-dark">&#8377</span><span class="text-dark" id="walletBalance"> <%= userWallet.balance %></span></p>
+                      <div class="input-group mb-3">
+                        <span class="input-group-text">$</span>
+                        <input id="inputAmount" type="number" class="form-control"  name="walletAmount" aria-label="Dollar amount (with dot and two decimal places)">  
+                      </div>
+                  </div>
+                  <p id="indicator" class="text-success ms-2"></p>
+                  <% } else { %>
+                    <h5>No Wallet found</h5>
+                    <% }%>
+                  </div>
+      
+                  <div class="d-flex justify-content-center mt-4">
+                    <button type="submit" class="btn btn-dark shadow-0 border mt-3">Place the Order</button>
+                  </div>
+                </form>
+                </div>
+              </div>
+              <!-- Checkout -->
+            </div>
+            <div class="col-xl-4 col-lg-4 d-flex justify-content-center justify-content-lg-end">
+                
+              <div class="ms-lg- mt-4 mt-lg-0" style="min-width: 320px;">
+                <h5 class="card-title mb-3">Summary</h5>
+                <div class="d-flex justify-content-between">
+                    <p class="mb-2">Items:</p>
+                    <p class="mb-2"><%= userCart.items.length %></p>
+                  </div>
+                <div class="d-flex justify-content-between">
+                  <p class="mb-2">Total price:</p>
+                  <p class="mb-2">Rs <%= totalPrice %></p>
+                </div>
+                <div class="d-flex justify-content-between">
+                  <p class="mb-2">Discount:</p>
+                  <p class="mb-2 text-danger">- Rs <%= discountPrice %></p>
+                </div>
+                <hr />
+                <div class="d-flex justify-content-between">
+                  <p class="mb-2">Total price:</p>
+                  <p class="mb-2 fw-bold">Rs <%= totalPrice %></p>
+                </div>
+      
+                <hr />
+                <h5 class="text-dark my-4">Items in cart</h5>
+                <% userCart.items.forEach(function(cart,index){ %>
+                <div class="d-flex align-items-center mb-4">
+                  <div class="me-3">
+                    <img src="<%= cart.product.images[0] %>" style="height: 96px; width: 96x;" class="img-sm rounded border" />
+                  </div>
+                  <div class="">
+                    <a href="#" class="nav-link">
+                        <p class="text-dark fw-bold m-0"><%= cart.product.productName %></p>
+                    </a>
+                    <div class="price text-muted">quantity: <%= cart.quantity %></div>
+                    <div class="price text-muted">Total: <%= cart.product.price * cart.quantity %></div>
+                  </div>
+                </div>
+                <% }) %>
+                
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      
+
+    <%- include('../partials/footer.ejs') %>
+
+    <script>
+
+      let walletBalance = document.getElementById('walletBalance');
+      let inputAmount = document.getElementById('inputAmount');
+      let indicator = document.getElementById('indicator');
+      let currentBalance = Number(walletBalance.innerHTML)
+      
+      
+      inputAmount.addEventListener('change',changeInput);
+
+      function changeInput(){
+        let inputValue = Number(inputAmount.value);
+
+        if(currentBalance < inputValue){
+          indicator.textContent = "wallet balance exceeds the expected amount";
+          indicator.classList.add('text-success','text-danger');
+        } else {
+          indicator.textContent = "";
+          indicator.classList.replace('text-danger','text-success')
+        }
+      }
+
+    </script>

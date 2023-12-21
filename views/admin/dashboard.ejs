@@ -1,0 +1,394 @@
+<%- include('../partials/header.ejs') %>
+<%- include('../partials/admin-navebar.ejs')%>
+
+
+<style>
+    
+  </style>
+
+<div class="mb-5 px-4 col-xl-10 col-lg-9 col-md-9 col-10">
+    <h2 class="mt-4 fw-bold subheading">Dashboard</h2>
+    <hr size="4">
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card mb-3">
+                <div class="row g-0">
+                  <div class="col-lg-12 col-md-8">
+                    <div class="cart-header d-flex justify-content-between">
+                        <h3 class="card-title m-3">Inventory</h3>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-outline-dark mx-3 my-3 dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                              Action
+                            </button>
+                            <ul class="dropdown-menu">
+                              <li><a class="dropdown-item" href="#">Action</a></li>
+                              <li><a class="dropdown-item" href="#">Another action</a></li>
+                              <li><a class="dropdown-item" href="#">Something else here</a></li>
+                              <li><hr class="dropdown-divider"></li>
+                              <li><a class="dropdown-item" href="#">Separated link</a></li>
+                            </ul>
+                          </div>
+                    </div>
+                    <div class="card-body ms-3">  
+                      <div class="row d-flex justify-content-around">
+                        <div class="col-lg-3">
+                            <div class="d-flex aline-item-center">
+                                <div class="bg-primary border rounded-3 d-flex align-items-center">
+                                    <i class="fs-3 mx-4 fa-solid fa-arrow-trend-up"></i>
+                                </div>
+                                <div class="ms-3">
+                                    <div class="small fs-6">
+                                        <p class="m-0 text-muted">Sales</p>
+                                    </div>
+                                    <h4><%= itemsSold %></h4>
+                                </div>                               
+                            </div>
+                            
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="d-flex aline-item-center">
+                                <div class=" border rounded-3 d-flex align-items-center" style="background-color: rgb(0, 198, 7);">
+                                    <i class="fs-3 mx-4 fa-solid fa-money-bill"></i>
+                                </div>
+                                <div class="ms-3">
+                                    <div class="small fs-6">
+                                        <p class="m-0 text-muted">Income</p>
+                                    </div>
+                                    <h4>&#8377 <%= totalIncome %></h4>
+                                </div>                               
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="d-flex aline-item-center">
+                                <div class=" border rounded-3 d-flex align-items-center border border-dark" style="background-color: rgb(174, 174, 174);">
+                                    <i class="fs-3 text-light mx-4 fa-solid fa-users"></i>
+                                </div>
+                                <div class="ms-3">
+                                    <div class="small fs-6">
+                                        <p class="m-0 text-muted">Users</p>
+                                    </div>
+                                    <h4><%= users.length %></h4>
+                                </div>                               
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="d-flex aline-item-center">
+                                <div class="bg-secondary border rounded-3 d-flex align-items-center">
+                                    <i class="fs-3 mx-4 fa-solid fa-money-bill"></i>
+                                </div>
+                                <div class="ms-3">
+                                    <div class="small fs-6">
+                                        <p class="m-0 text-muted">Orders</p>
+                                    </div>
+                                    <h4><%= orders.length %></h4>
+                                </div>                               
+                            </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                    <div class="cart-header">
+                        <h4 class="card-title text-muted m-3">Products</h4>
+                        </div>
+                    <div class="card-body ms-4">
+                        <div class="row d-flex justify-content-">
+                            <div class="col-lg-3">
+                                <div class="d-flex aline-item-center">
+                                    <div class=" border rounded-3 d-flex align-items-center" style="background-color: rgb(117, 155, 156);">
+                                        <i class="fs-3 mx-4 fa-solid fa-laptop"></i>
+                                    </div>
+                                    <div class="ms-3">
+                                        <div class="small fs-6">
+                                            <p class="m-0 text-muted">Products</p>
+                                        </div>
+                                        <h4><%= products.length %></h4>
+                                    </div>                               
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="d-flex aline-item-center">
+                                    <div class="bg-secondary  border rounded-3 d-flex align-items-center">
+                                        <i class="fs-3 mx-4 fa-solid fa-boxes-stacked"></i>
+                                    </div>
+                                    <div class="ms-3">
+                                        <div class="small fs-6">
+                                            <p class="m-0 text-muted">Stocks</p>
+                                        </div>
+                                        <h4><%= totalStock %></h4>
+                                    </div>                               
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="d-flex aline-item-center">
+                                    <div class="bg-light border rounded-3 d-flex align-items-center">
+                                        <i class="fs-3 mx-4 fa-solid fa-table-list"></i>
+                                    </div>
+                                    <div class="ms-3">
+                                        <div class="small fs-6">
+                                            <p class="m-0 text-muted">Categorys</p>
+                                        </div>
+                                        <h4><%= categorys.length %></h4>
+                                    </div>                               
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+              </div>
+        </div>
+    </div>
+
+    <!-- <div class="row mx-3">
+        <h3>Graph</h3>
+        <hr>
+        <div class="col-lg-6">
+            <div class="card chart-container ">
+                <canvas id="chartjs-line-1" width="400" height="200"></canvas>
+              </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card chart-container ">
+                <canvas id="chartjs-line-2" width="400" height="200"></canvas>
+              </div>
+        </div>
+    </div> -->
+    
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card mb-3">
+                <div class="row g-0">
+                    <div class="col-lg-12 col-md-8">
+                            <div class="cart-header d-flex justify-content-between">
+                                <h3 class="card-title m-3">Orders</h3>
+                                
+                            </div>
+                                  <div class="card-body ms-3">  
+                                    <div class="row d-flex justify-content-around">
+                                      <div class="col-lg-3">
+                                          <div class="d-flex aline-item-center">
+                                              <div class=" border rounded-3 d-flex align-items-center" style="background-color: darkkhaki;">
+                                                  <i class="fs-3 mx-4 fa-solid fa-solid fa-bars"></i>
+                                              </div>
+                                              <div class="ms-3">
+                                                  <div class="small fs-6">
+                                                      <p class="m-0 text-muted">Orders</p>
+                                                  </div>
+                                                  <h4><%= orders.length %></h4>
+                                              </div>                               
+                                          </div>
+                                          
+                                      </div>
+                                      <div class="col-lg-3">
+                                          <div class="d-flex aline-item-center">
+                                              <div class="bg-success border rounded-3 d-flex align-items-center">
+                                                  <i class="fs-3 mx-4 fa-solid fa-truck"></i>
+                                              </div>
+                                              <div class="ms-3">
+                                                  <div class="small fs-6">
+                                                      <p class="m-0 text-muted">Delivered</p>
+                                                  </div>
+                                                  <h4><%= deliveredOrder %></h4>
+                                              </div>                               
+                                          </div>
+                                      </div>
+                                      <div class="col-lg-3">
+                                          <div class="d-flex aline-item-center">
+                                              <div class="bg-dark border rounded-3 d-flex align-items-center">
+                                                  <i class="fs-3 text-light mx-4 fa-solid fa-check"></i>
+                                              </div>
+                                              <div class="ms-3">
+                                                  <div class="small fs-6">
+                                                      <p class="m-0 text-muted">Confirmed</p>
+                                                  </div>
+                                                  <h4><%= confirmedOrder %></h4>
+                                              </div>                               
+                                          </div>
+                                      </div>
+                                      <div class="col-lg-3">
+                                          <div class="d-flex aline-item-center">
+                                              <div class="bg-warning border rounded-3 d-flex align-items-center">
+                                                  <i class="  fs-3 mx-4 fa-solid fa-truck-fast"></i>
+                                              </div>
+                                              <div class="ms-3">
+                                                  <div class="small fs-6">
+                                                      <p class="m-0 text-muted">Shipping</p>
+                                                  </div>
+                                                  <h4><%= shippingOrder %></h4>
+                                              </div>                               
+                                          </div>
+                                      </div>
+                                    </div>
+                                  
+                            </div>
+                        
+                    </div>
+                </div>
+            </div>                 
+        </div>
+    </div>
+
+
+    
+
+
+    <div class="row mx-4 my-5 mb-3">
+        <h2 class="mb-0">Orders</h2>
+        <hr class="mt-0">
+      </div>
+      <div class="row mx-4">
+        <div class="col-lg-4 col-md-3">
+          <h6>Order Id</h6>
+        </div>
+        <div class="col-lg-2 col-md-3 text-center">
+          <h6>Order Date</h6>
+        </div>
+        <div class="col-lg-2 col-md-2 text-center">
+          <h6>Order Status</h6>
+        </div>
+        <div class="col-lg-2 col-md-2 text-center">
+          <h6>Total price</h6>
+        </div>
+      </div>
+      <div class="row mx-4">
+        <% if(orders.length == 0) {%>
+          <div class="d-flex justify-content-center mt-3">
+            <h2>No Order found</h2>
+          </div>
+          <% } else { %>
+        <% orders.forEach(function(order){ %>
+          <div class="card border border-secondary" >
+            <div class="row g-0 d-flex align-items-center px-2">
+              
+              <div class="col-lg-4 col-md-3">
+                <div class="card-body">
+                    
+                  <h5 class="card-title fw-bold text-start">Id: <%= order._id %></h5>
+                </div>
+              </div>
+              <div class="col-lg-2 col-md-3">
+                <div class="card-body text-center">
+                    
+                  <h5 class="card-title"><%= order.orderDate.toLocaleString('default',{day: 'numeric', month: 'numeric', year: 'numeric'}) %></h5>
+                </div>
+              </div>
+              <div class="col-lg-2 col-md-2">
+                <div class="card-body text-center">
+                    
+                  <% if(order.orderStatus === 'Processing'){ %>
+                    <h5 class="card-title text-muted"><%= order.orderStatus %></h5>
+                    <% } else if(order.orderStatus === 'Confrimed') { %>
+                      <h5 class="card-title"><%= order.orderStatus %></h5>
+                      <% } else if(order.orderStatus === 'Shipping') { %>
+                        <h5 class="card-title text-warning"><%= order.orderStatus %></h5>
+                        <% } else if(order.orderStatus === 'Cancelled') {%>
+                          <h5 class="card-title text-danger"><%= order.orderStatus %></h5>
+                          <% } else if(order.orderStatus === 'Return Pending') {%>
+                            <h5 class="card-title text-danger"><%= order.orderStatus %></h5>
+                          <% } else { %> 
+                            <h5 class="card-title text-success"><%= order.orderStatus %></h5>
+                            <% } %>
+                </div>
+              </div>
+              <div class="col-lg-2 col-md-2">
+                <div class="card-body text-center">
+                    
+                  <h5 class="card-title">Rs <%= order.totalPrice %></h5>
+                </div>
+              </div>
+              <div class="col-lg-2 col-md-2">
+                <div class="card-body text-center">
+                    
+                  <a href="/admin/orders/<%= order._id %>"><button class="btn btn-outline-dark fw-bold" type="button">View Details</button></a>
+                </div>
+              </div>
+            </div>
+          </div>
+    <% }) } %>
+    
+    </div>
+
+
+
+
+
+
+    <!-- side bar -->
+</div>
+</div>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+<script>
+window.theme = {
+    primary: "#3498db", // Replace this with your actual primary color
+    secondary :"#3598db"
+  };
+    new Chart(document.getElementById("chartjs-line-1"), {
+  type: "line",
+  data: {
+    labels: ["Monday", "Tuseday", "Wednesdat", "Thursday", "Fryday", "Saturay", "Sunday",],
+    datasets: [{
+      label: "Sales",
+      fill: true,
+      backgroundColor: "transparent",
+      borderColor: window.theme.primary,
+      data: [2115, 1562, 1584, 1892, 1487, 2223, 2966, 2448, 2905, 3838, 2917, 3327]
+    }, ]
+  },
+  options: {
+    scales: {
+      xAxes: [{
+        reverse: true,
+        gridLines: {
+          color: "rgba(0,0,0,0.05)"
+        }
+      }],
+      yAxes: [{
+        borderDash: [5, 5],
+        gridLines: {
+          color: "rgba(0,0,0,0)",
+          fontColor: "#fff"
+        }
+      }]
+    }
+  }
+});
+
+new Chart(document.getElementById("chartjs-line-2"), {
+  type: "line",
+  data: {
+    labels: ["Monday", "Tuseday", "Wednesdat", "Thursday", "Fryday", "Saturay", "Sunday", ],
+    datasets: [{
+      label: "Orders",
+      fill: true,
+      backgroundColor: "transparent",
+      borderColor: window.theme.secondary,
+      data: [2115, 1562, 1584, 1892, 1487, 2223, 2966, 2448, 2905, 3838, 2917, 3327]
+    }, ]
+  },
+  options: {
+    scales: {
+      xAxes: [{
+        reverse: true,
+        gridLines: {
+          color: "rgba(0,0,0,0.05)"
+        }
+      }],
+      yAxes: [{
+        borderDash: [5, 5],
+        gridLines: {
+          color: "rgba(0,0,0,0)",
+          fontColor: "#fff"
+        }
+      }]
+    }
+  }
+});
+</script>

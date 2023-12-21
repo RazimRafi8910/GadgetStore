@@ -1,0 +1,237 @@
+<%- include('../partials/header.ejs') %>
+    <%- include('../partials/user-navbar.ejs') %>
+
+    <div class="container">
+      <div class="row my-3">
+        <% if( message.message ) { %>
+          <div class="alert alert-success text-center" role="alert">
+              <%= message.message %>
+            </div>
+            <% } %>
+            <% if( message.error ) { %>
+              <div class="alert alert-danger" role="alert">
+                  <%= message.error %>
+                </div>
+                <% } %>
+      </div>
+      
+    </div>
+    
+
+    <div class="container">
+        <div class="row mt-4">
+            <h1 class="mb-0">Order Details</h1>
+                <hr class="mt-0">
+        </div>
+        
+        <div class="row">
+            <h2 class="mx-2">Items</h2>
+            <hr>
+            <% userOrder.items.forEach(function(item){ %>
+                <div class="card mb-3" >
+                  <div class="row g-0 d-flex align-items-center px-2">
+                    <div class="col-lg-1 col-md-4 d-flex justify-content-center" >
+                      <a class="text-secondary text-decoration-none" href="/product/<%= item.product._id %>">
+                      <img src="<%= item.product.images[0] %>" class="img-fluid rounded-start " alt="" style="width: 10rem;">
+                  </a>
+                  
+                    </div>
+                    <div class="col-lg-4 col-md-3">
+                      <div class="card-body">
+                          
+                        <h5 class="card-title fw-bold text-start"><%= item.product.productName %></h5>
+                      </div>
+                    </div>
+                    <div class="col-lg-2 col-md-3">
+                      <div class="card-body text-center">
+                          <h6 class="card-subtitle mb-2 text-muted">Price</h6>
+                        <h5 class="card-title"><%= item.product.price %></h5>
+                      </div>
+                    </div>
+                    <div class="col-lg-2 col-md-2">
+                      <div class="card-body text-center">
+                          <h6 class="card-subtitle mb-2 text-muted">quantity</h6>
+                        <h5 class="card-title"><%= item.quantity %></h5>
+                      </div>
+                    </div>
+                    <div class="col-lg-2 col-md-2">
+                      <div class="card-body text-center">
+                          <h6 class="card-subtitle mb-2 text-muted">Total Price</h6>
+                        <h5 class="card-title"><%= item.product.price * item.quantity %></h5>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+          <% }) %>
+        </div>
+        
+        <hr>
+
+
+    <div class="row mt-4 d-flex justify-content-between">
+        <div class="col-lg-6">
+            <h2 class="mx-1">Order Details</h2>
+            
+            <div class="mx-2 mt-3">
+                <div class="d-flex ">
+                    <h5 class="mt-1 ">Order Id : </h5><p class="my-0 fs-5"> <%= userOrder._id.toString()  %></p>
+                </div>
+                
+                <div class="d-flex ">
+                    <h5 class="mt-1 ">Order Date : </h5><p class=" my-0 fs-5 "> <%= userOrder.orderDate.toLocaleString('default',{day: 'numeric', month: 'numeric', year: 'numeric'}) %></p>
+                </div>
+                
+                <div class="d-flex ">
+                  <% if(userOrder.orderStatus === 'Processing'){ %>
+                    <h5 class="mt-1 ">Status :</h5><p class=" my-0 fs-5 fw-bold text-muted"><%= userOrder.orderStatus %></p>
+                    <% } else if(userOrder.orderStatus === 'Confrimed') { %>
+                      <h5 class="mt-1 ">Status :</h5><p class=" my-0 fs-5 fw-bold"><%= userOrder.orderStatus %></p>
+                      <% } else if(userOrder.orderStatus === 'Shipping') { %>
+                        <h5 class="mt-1 ">Status :</h5><p class=" my-0 fs-5 fw-bold text-warning"><%= userOrder.orderStatus %></p>
+                        <% } else if(userOrder.orderStatus === 'Cancelled') {%>
+                          <h5 class="mt-1 ">Status :</h5><p class=" my-0 fs-5 fw-bold text-danger"><%= userOrder.orderStatus %></p>
+                          <% } else if(userOrder.orderStatus === 'Return Pending') {%>
+                            <h5 class="mt-1 ">Status :</h5><p class=" my-0 fs-5 fw-bold text-danger"><%= userOrder.orderStatus %></p>
+                          <% } else { %> 
+                            <h5 class="mt-1 ">Status :</h5><p class=" my-0 fs-5 fw-bold text-success"><%= userOrder.orderStatus %></p>
+                            <% } %>
+                </div>
+                <div class="d-flex">
+                    <h5 class="mt-1">Address :</h5>
+                    <div>
+                        <p class=" fs-5 ms-3 my-0"><%= userOrder.orderAddress.houseName %></p>
+                        <p class="text- ms-3 my-0"><%= userOrder.orderAddress.address %>,<%= userOrder.orderAddress.city %>,<%= userOrder.orderAddress.state %></p>
+                        <p class="fs-6 ms-3 text-"><%= userOrder.orderAddress.pincode %></p>
+                    </div> 
+                </div>
+                
+            </div>
+        </div>
+
+
+        <div class="card col-lg-5 mt-2 border border-secondary px-0">
+        <h5 class="card-title m-2 ">Payment</h5>
+        <hr class="m-0">
+        <div class="d-flex justify-content-between">
+            <p class="m-2">Items</p>
+            <p class="m-2"><%= userOrder.items.length %></p>
+          </div>
+          <div class="d-flex justify-content-between">
+            <p class="m-2">Total Price:</p>
+            <p class="m-2 text-dark">+ Rs <%= userOrder.totalPrice %></p>
+          </div>
+          <div class="d-flex justify-content-between">
+            <p class="m-2">Discound</p>
+            <p class="m-2 text-danger">-  0.00</p>
+          </div>
+          <div class="d-flex justify-content-between">
+            <p class="m-2">Payment:</p>
+            <p class="m-2 text-dark">Cash On Delivery</p>
+          </div>
+          <hr />
+          <div class="d-flex justify-content-between">
+            <p class="m-2">Total Price:</p>
+            <p class="m-2">+ Rs <%= userOrder.totalPrice %> </p>
+          </div>
+        
+        <div class="card-footer px-0 py-0">
+        
+          </div>
+        </div>
+  </div>
+
+  <div class="row mt-5">
+        <div class=" d-flex justify-content-center">
+          <% let orderDate = userOrder.orderDate; %>
+          <% let currentDate = Date.now(); %>
+          <% let daysAgo = Math.floor((currentDate - orderDate) / (1000 * 60 * 60 * 24)); %>
+
+          <% if(userOrder.orderStatus === 'Delivered') { %>
+          <% if(daysAgo < 7) { %>
+            <button type="button" data-bs-toggle="modal" data-bs-target="#returnOrder" class="btn btn-danger py-2 px-5">Return Order</button>
+            <% } %>
+          <% } else if(userOrder.orderStatus === 'Return Pending' ) { %>  
+            <p class="text-secondary">Return Pending</p>
+            <% } else if(userOrder.orderStatus === 'Return Accepted') {%>
+              <p class="text-success">Return Accepted</p>
+            <% } else if(userOrder.orderStatus === 'Cancelled') { %>
+              <p class="text-danger">Order Cancelled</p>
+              <% } else { %>
+                <button type="button" data-bs-toggle="modal" data-bs-target="#cancelOrder" class="btn btn-danger py-2 px-5">Cancel Order</button>
+                <% } %>
+          </div>
+  </div>
+
+<!-----modal for cancel order---->
+<div class="modal fade" id="cancelOrder" tabindex="-1" aria-labelledby="cancelOrder" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Confrim Delete</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-danger">
+          Are you sure you want to Cancel this Order?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-danger" onclick="cancelOrder('<%= userOrder._id %>')">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- modal for Return Order -->
+<div class="modal fade" tabindex="-1" role="dialog" id="returnOrder" aria-labelledby="returnOrder" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content borer-top border-secondary">
+      <form action="/order/<%= userOrder._id%>/return" method="post">
+      <div class="modal-body text-center my-">
+        <h3>Return Form</h3>
+        <hr>
+        <div class="row my-4">
+          <label for="inputEmail3" class="col-sm-2 col-form-label">Reason</label>
+          <div class="col-sm-10">
+            <select id="inputState" name="reason" class="form-select" required>
+              <option selected>Choose...</option>
+              <option>Damaged</option>
+              <option>High Price</option>
+              <option>Low Quality</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+        <p>Refund will add to Wallet</p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      <button type="submit" class="btn btn-primary">Return</button>
+    </div>
+  </form>
+</div>
+</div>
+
+</div>
+</div>
+
+    <%- include('../partials/footer.ejs') %>
+
+    <script>
+
+
+      async function cancelOrder(orderId){
+        try {
+          let responce =  await fetch(`/order/${orderId}/cancel`,{
+            method:'PUT',
+            headers: {
+          'Content-Type': 'application/json',
+          }});
+          console.log(responce)
+          window.location.href = '/profile'
+        } catch (error) {
+          
+        }
+      }
+
+    </script>

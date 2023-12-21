@@ -1,0 +1,289 @@
+<%- include('../partials/header.ejs') %>
+<%- include('../partials/user-navbar.ejs') %>
+
+
+
+<div class="container mt-4">
+    <% if (message.error) { %>
+        <div class="alert alert-danger" role="alert">
+            <%= message.error %>
+        </div>
+    <% } %>
+
+    
+    <div class="row mt-5">
+        <div class="d-flex justify-content-between">
+          <h1 class="fw-bold subheading">Products</h1>
+          
+          
+
+      </div>
+      
+  </div>
+
+    <div class="row">
+        <form class="d-flex col-xl-7 col-lg-5 col-12 mt-2 mb-3" action="/products" method="get">
+          <% if(productName === '') { %>
+            <input class="form-control py-2 border border-secondary rounded-0 rounded-start" 
+            type="search" 
+            name="productName" 
+            placeholder="Search" 
+            aria-label="Search">
+            <% } else { %>
+              <input class="form-control py-2 border border-secondary rounded-0 rounded-start" 
+              type="search" 
+              name="productName"
+              value="<%= productName %>" 
+              placeholder="Search" 
+              aria-label="Search">
+              <% } %>
+            <button class="btn btn-dark px-4 rounded-0 rounded-end" type="submit">Search</button>
+        </form>
+
+        <div class="col-xl-2 col-lg-3 col-12 mt-2 mb-3">
+            <div class="d-flex justify-content-center">
+
+              
+
+                
+            </div>
+        </div>
+    </div>
+
+    <hr class="my-3">
+    
+  
+    <div class="row d-flex">
+      <div class="col-lg-3 border border-secondary">
+        <form action="/products" method="get">
+        <!-- <div class="input-group my-4">
+        <label for="categorySelect" class="form-label fs-4 fw-bold">Sort by :</label>
+                <select class="form-select py-2 mx-2 border border-secondary" id="categorySelect" name="category" required>
+                  <option selected>Choose...</option>
+                  <option value="price" >Price A-Z</option>
+                  <option value="price" >Price Z-A</option>
+                </select> 
+          </div> -->
+        <div class="mb-5 mt-3">
+            <h2>Categorys</h2>
+            <hr>
+              <div class="input-group ">
+                <div class="dropdown w-100 d-flex justify-content-center">
+                  <a class="btn btn-outline-dark  ps-4 fs-5 w-75 text-start text-muted" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                    <% if(filterCategory == 'All') {%>
+                      All 
+                      <% } else { %>
+                    <% categorys.forEach(function (category) { %>
+                    <% if(filterCategory == category._id ) {%>
+                      <%= category.categoryName %>
+                      <% }})} %>
+                  </a>
+                  
+
+
+                  <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                    <li><a class="dropdown-item" href="/products?category=">all</a></li>
+                    <% categorys.forEach(function (category) { %> 
+                    <li><a class="dropdown-item" href="/products?category=<%= category._id %>"><%= category.categoryName %></a></li>
+                    <% }) %>
+                  </ul>
+                </div>
+            </div>
+        </div>
+         
+          
+          <h2>Filter</h2>
+          <hr class="m-0">
+          <div class="ms-3">
+            <h4 class="mb-3 mt-2">Price</h4>
+            
+              <% if(filterPrice === '5000') { %>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" value="5000" name="priceFilter" id="flexCheckDefault1" checked>
+              <label class="form-check-label" for="flexCheckDefault1">
+                <p class="ms-1 fs-5 m-0">&#8377  5000</p>
+              </label>
+            </div>
+            <% } else { %>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" value="5000" name="priceFilter" id="flexCheckDefault1">
+                <label class="form-check-label" for="flexCheckDefault1">
+                  <p class="ms-1 fs-5 m-0">&#8377  5000</p>
+                </label>
+              </div>
+              <% } %>
+              <% if(filterPrice === '10000') { %>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" value="10000" name="priceFilter" id="flexCheckDefault2" checked>
+              <label class="form-check-label" for="flexCheckDefault2">
+                <p class="ms-1 fs-5 m-0">&#8377  10,000</p>
+              </label>
+            </div>
+            <% } else { %>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" value="10000" name="priceFilter" id="flexCheckDefault2">
+                <label class="form-check-label" for="flexCheckDefault2">
+                  <p class="ms-1 fs-5 m-0">&#8377  10,000</p>
+                </label>
+              </div>
+              <% } %>
+              <% if(filterPrice === '50000') { %>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" value="50000" name="priceFilter" id="flexCheckDefault3" checked>
+              <label class="form-check-label" for="flexCheckDefault3">
+                <p class="ms-1 fs-5 m-0">&#8377  50,000</p>
+              </label>
+            </div>
+            <% } else { %>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" value="50000" name="priceFilter" id="flexCheckDefault3">
+                <label class="form-check-label" for="flexCheckDefault3">
+                  <p class="ms-1 fs-5 m-0">&#8377  50,000</p>
+                </label>
+              </div>
+              <% } %>
+              <% if(filterPrice === '75000') { %>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" value="75000" name="priceFilter" id="flexCheckDefault4" checked>
+              <label class="form-check-label" for="flexCheckDefault4">
+                <p class="ms-1 fs-5 m-0">&#8377  75,000</p>
+              </label>
+            </div>
+            <% } else { %>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" value="75000" name="priceFilter" id="flexCheckDefault4">
+                <label class="form-check-label" for="flexCheckDefault4">
+                  <p class="ms-1 fs-5 m-0">&#8377  75,000</p>
+                </label>
+              </div>
+              <% } %>
+              <% if(filterPrice === '100000') { %>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" value="100000" name="priceFilter" id="flexCheckDefault5" checked>
+              <label class="form-check-label" for="flexCheckDefault5">
+                <p class="ms-1 fs-5 m-0">&#8377  100,000</p>
+              </label>
+            </div>
+            <% } else { %>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" value="100000" name="priceFilter" id="flexCheckDefault5">
+                <label class="form-check-label" for="flexCheckDefault5">
+                  <p class="ms-1 fs-5 m-0">&#8377  100,000</p>
+                </label>
+              </div>
+              <% } %>
+              <% if(filterPrice === '') { %>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" value="" name="priceFilter" id="flexCheckDefault5">
+              <label class="form-check-label" for="flexCheckDefault5">
+                <p class="ms-1 fs-5 m-0"><small>Above</small>&#8377  100,000</p>
+              </label>
+            </div>
+           <% } %>
+          </div>
+          <div class="my-3 d-flex justify-content-center">
+            <button class="btn btn-dark px-3 mb-5">Filter</button>
+          </div>
+        </form>
+    </div>
+      <div class="col-lg-9">
+        <div class="row">
+          <% if(products.length === 0) { %>
+            <div class="d-flex justify-content-center py-5 my-5">
+              <h2>No products found</h2>
+            </div> 
+            <% } else { %>
+            <% products.forEach(function (product) { %>
+                <div class="col-lg-4 col-md-6 col-sm-12 d-flex justify-content-center">
+                    <div class="card my-2 w-100 shadow-2-strong" style="width: 18rem;" >
+                      <a href="/product/<%= product._id %>/view" class="text-decoration-none text-dark">
+                        <img src="<%= product.images[0] %>" style="height: 16rem;" class="card-img-top" alt="product image">
+                      </a>
+                        <div class="card-body d-flex flex-column">
+                          <a href="/product/<%= product._id %>/view" class="text-decoration-none text-dark">
+                          <h5 class="card-title fw-bold"><%= product.productName %></h5>
+                          <p class="card-text">&#8377 <%= product.price %></p>
+                        </a>
+                          <div class="d-flex align-items-end pt-1 px-0 pb-0 mt-auto">
+                            <button type="button" onclick="addToCart('<%= product._id %>')" class="btn btn-dark shadow-0 me-1">Add to cart</button>
+                            <a href="" class="btn btn-light border px-2 pt-2 icon-hover">
+                              <i class="fas fa-heart fa-lg text-secondary px-1"></i>
+                            </a>
+                          </div>
+                          <% if(product.stock==0) {%>
+                            <p class="card-text text-danger mx-2 mt-2"><small>Out of stock</small></p>
+                            <% } else { %>
+                            <p class="card-text mx-2 mt-2"><small>Available <%= product.stock %></small></p>
+                            <% } %>
+                        </div>
+                      </div>
+                    </div>
+            <% }) } %>
+        </div>
+        
+
+      </div>
+      
+      </div>
+
+
+<!-- Modal -->
+
+
+
+</div>
+
+
+<section class="mt-4">
+  <nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+        <% let page = 1 %>
+         <% if(page > 1 ){ %>
+      <li class="page-item disabled">
+        <a class="page-link" href="/products?page=<%= page--  %>" >Previous</a>
+      </li>
+      <% } %>
+      <li class="page-item"><a class="page-link" href="/products?page=1">1</a><% page = 1 %></li>
+      <li class="page-item"><a class="page-link" href="/products?page=2">2</a><% page++ %></li>
+      <li class="page-item"><a class="page-link" href="/products?page=3">3</a><% page++ %></li>
+      <li class="page-item">
+        <a class="page-link" href="/products?page=<%= page++  %>">Next</a>
+      </li>
+    </ul>
+  </nav>
+</section>
+  
+<%- include('../partials/footer.ejs') %>
+
+<script>
+let selectedValue
+function filterProduct() {
+  
+  const radioButtons = document.querySelectorAll('input[name="priceFilter"]');
+
+  // Find the checked radio button
+  const selectedRadioButton = Array.from(radioButtons).find(button => button.checked);
+   selectedValue = selectedRadioButton.value
+  // Construct the URL with the selected value as a query parameter
+  const url = `/products?price=${selectedValue}`;
+  
+
+  // Redirect to the filtered-products page with the selected value as a query parameter
+  //window.location.href = url;
+}
+console.log(selectedValue)
+    async function addToCart(productId){
+  try {
+    await fetch(`/cart/${productId}/add`,{
+      method:'POST',
+      credentials: 'include',
+      headers: {
+          'Content-Type': 'application/json',
+      },
+  });
+     window.location.reload();
+  } catch (error) {
+    console.log(error);
+  }
+}
+</script>

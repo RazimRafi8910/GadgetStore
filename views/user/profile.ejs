@@ -1,0 +1,251 @@
+<%- include('../partials/header.ejs') %>
+    <%- include('../partials/user-navbar.ejs') %>
+
+    <style>
+        body{
+          background-color: #f1f1f1;
+        }
+      </style>
+
+        <div class="container mt-5">
+            <h2 class="mb-0">Profile</h2>
+            <hr class="mt-0">
+            <div class="row px-4 py-2">
+                
+              <% if( message.update ) { %>
+                <div class="alert alert-success" role="alert">
+                    <%= message.update %>
+                  </div>
+                  <% } %>
+
+                <div class="card">
+                    <div class="card-body ms-3">
+            
+                        <h3 class="card-title"><%= user.username %></h3>
+                        <div class="row mb-4">
+                            <div class="col-lg-6">
+                                <p class="card-text text-muted fw-bold fs-5">Eamil : <%= user.email %></p>
+                                <p class="card-text text-muted fw-bold fs-5"> Phone : <%= user.number %></p>
+                            </div>
+                            <div class="col-lg-6">
+                                <p class="card-text text-muted fw-bold fs-5"> Accound Status : <%= user.accountStatus %></p>
+                                <% if(userWallet) { %>
+                                <p class="card-text text-muted fw-bold fs-5">Wallet Balance : <%= userWallet.balance %></p>
+                                <% } %>
+                            </div>
+                        </div>
+                        <a href="/profile/edit" class="btn btn-outline-dark fw-bold px-4 ">Edit</a>
+                        <a href="/logout" class="btn btn-outline-danger fw-bold px-4 ">Logout</a>
+                        <a href="/wallet" class="btn btn-outline-primary fw-bold px-4 ">Wallet</a>
+                        <!-- <% if(userWallet) { %>
+                        <a href="/wallet" class="btn btn-outline-primary fw-bold px-4 ">Wallet</a>
+                        <% } %> -->
+                    </div>
+                  </div>
+
+            </div>
+
+            <div class="row m-4">
+                <h2 class="mb-0">Address</h2>
+            <hr class="mt-0">
+            </div>
+
+            <% if( message.message ) { %>
+                <div class="alert alert-success" role="alert">
+                    <%= message.message %>
+                  </div>
+                  <% } %>
+                  <% if( message.error ) { %>
+                    <div class="alert alert-danger" role="alert">
+                        <%= message.error %>
+                      </div>
+                      <% } %>
+
+            <div class="row px-3">
+                <% if( userAddress) { %>
+                <% userAddress.forEach(function(address){ %>
+                <div class="col-lg-6">
+                    <div class="card border border-secondary">
+                        <div class="card-body mx-2">
+                          <h4 class="card-title"><i class="text-muted me-2 fs-2 fa-solid fa-location-dot"></i><%= address.addressType %></h4>
+                          <p class="card-text fs-4 m-0 fw-bold"><%= address.houseName %></p>
+                          <p class="card-text fs-5 mb-1"><%= address.address %>,<%= address.town %>,<%= address.city %>,<%= address.state %></p>
+                          <p class="card-text text-muted fw-bold"><%= address.pincode %></p>
+                          <button class="btn btn-danger" type="button" data-bs-toggle="modal" data-bs-target="#deleteAddress" onclick="deleteAddress('<%= address._id %>')">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                          <a href="/address/<%= address._id %>/edit" class="btn btn-primary"><i class="fa-solid fa-pen-to-square"></i></a>
+                        </div>
+                      </div>
+                </div>
+                <% })}%>
+                
+
+                <div class="col-lg-3 ">
+                    <div class="bg-white border border-secondary rounded-3 my-2 ">
+                        <a href="/address/<%= user._id %>/add" class="text-decoration-none text-dark">
+                        <div class="px-3 py-3 d-flex">
+                            <div class="mx-4">
+                                <i class="text-muted fs-2 fa-solid fa-plus"></i>
+                            </div>
+                            <div class="">                                
+                                    <h4 class="">Add Address</h4>                               
+                            </div>                           
+                        </div>
+                    </a>  
+                    </div>
+                </div>
+                
+            </div>
+
+            <div class="row m-4">
+                <h2 class="mb-0">Orders</h2>
+                <hr class="mt-0">
+              </div>
+              <div class="row mx-4">
+                <div class="col-lg-4 col-md-3">
+                  <h6>Order Id</h6>
+                </div>
+                <div class="col-lg-2 col-md-3 text-center">
+                  <h6>Order Date</h6>
+                </div>
+                <div class="col-lg-2 col-md-2 text-center">
+                  <h6>Order Status</h6>
+                </div>
+                <div class="col-lg-2 col-md-2 text-center">
+                  <h6>Total price</h6>
+                </div>
+              </div>
+              <div class="row mx-4">
+                <% if(userOrders.length == 0) {%>
+                  <div class="d-flex justify-content-center mt-4">
+                    <h2>No Order found</h2>
+                  </div>
+                  <div class="d-flex justify-content-center">
+                    <a href="/" class="btn btn-outline-dark py-2 px-5">continue Shoping</a>
+                  </div>
+                  <% } else { %>
+                <% userOrders.forEach(function(order){ %>
+                  <div class="card border border-secondary" >
+                    <div class="row g-0 d-flex align-items-center px-2">
+                      
+                      <div class="col-lg-4 col-md-3">
+                        <div class="card-body">
+                            
+                          <h5 class="card-title fw-bold text-start">Id: <%= order._id %></h5>
+                        </div>
+                      </div>
+                      <div class="col-lg-2 col-md-3">
+                        <div class="card-body text-center">
+                            
+                          <h5 class="card-title"><%= order.orderDate.toLocaleString('default',{day: 'numeric', month: 'numeric', year: 'numeric'}) %></h5>
+                        </div>
+                      </div>
+                      <div class="col-lg-2 col-md-2">
+                        <div class="card-body text-center">
+                          <!-- <h5 class="card-title"><%= order.orderStatus %></h5> -->
+                            
+                          <% if(order.orderStatus === 'Processing'){ %>
+                            <h5 class="card-title text-muted"><%= order.orderStatus %></h5>
+                            <% } else if(order.orderStatus === 'Confrimed') { %>
+                              <h5 class="card-title"><%= order.orderStatus %></h5>
+                              <% } else if(order.orderStatus === 'Shipping') { %>
+                                <h5 class="card-title text-warning"><%= order.orderStatus %></h5>
+                                <% } else if(order.orderStatus === 'Cancelled') {%>
+                                  <h5 class="card-title text-danger"><%= order.orderStatus %></h5>
+                                  <% } else if(order.orderStatus === 'Return Pending') {%>
+                                    <h5 class="card-title text-danger"><%= order.orderStatus %></h5>
+                                  <% } else { %> 
+                                    <h5 class="card-title text-success"><%= order.orderStatus %></h5>
+                                    <% } %>
+
+                        </div>
+                      </div>
+                      <div class="col-lg-2 col-md-2">
+                        <div class="card-body text-center">
+                            
+                          <h5 class="card-title">Rs <%= order.totalPrice %></h5>
+                        </div>
+                      </div>
+                      <div class="col-lg-2 col-md-2">
+                        <div class="card-body text-center">
+                            
+                          <a href="/order/<%= order._id %>"><button class="btn btn-outline-dark fw-bold" type="button">View Details</button></a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+            <% }) } %>
+            
+            </div>
+            <div class="row mx-4 mt-3">
+              <h2 class="mb-0">Coupons</h2>
+            <hr class="mt-0">
+            </div>
+            <div class="row  mx-4">
+              <% userDetails.coupons.forEach(function(item){ %>
+              <div class="col-sm-4">
+                <div class="card">
+                  <div class="card-body">
+                    
+                    <h4 class="card-title"><%= item.coupon_id.couponName %></h4>
+                    <h5 class="card-title"><%= item.coupon_id.description %></h5>
+                    <p class="card-text">Code : <span class="fw-bold"><%= item.coupon_id.code %></span></p>
+                    <% if(item.isUsed) {%>
+                    <p class="card-text text-muted">Used</p>
+                    <% } else { %>
+                    <p class="card-text text-success m-0">Not Used</p>
+                    <% }%>
+                    <small><%= item.coupon_id.expriyDate.toLocaleString('default',{day: 'numeric', month: 'numeric', year: 'numeric'}) %></small>
+                  </div>
+                </div>
+              </div>
+              <% }) %>
+            </div>
+            
+<!-----modal for delete addresss---->
+<div class="modal fade" id="deleteAddress" tabindex="-1" aria-labelledby="deleteAddress" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Confrim Delete</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-danger">
+            Are you sure you want to delete this Address?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-danger" onclick="confirmDelete()">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+        </div>
+
+    <%- include('../partials/footer.ejs') %>
+<script>
+
+let currentAddressId;
+
+ function deleteAddress (addressId){
+    currentAddressId = addressId;
+}
+
+async function confirmDelete(){
+    try {
+        await fetch(`/address/${currentAddressId}/delete`,{
+            method:'DELETE',
+            headers: {
+          'Content-Type': 'application/json',
+    }});
+    window.location.reload();
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+
+</script>

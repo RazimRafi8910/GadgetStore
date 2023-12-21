@@ -1,0 +1,49 @@
+<%- include('../partials/header.ejs') %>
+    <%- include('../partials/user-navbar.ejs') %>
+
+    <div class="container mt-5">
+        <h2 class="mb-0">Wallet</h2>
+            <hr class="mt-0">
+
+            <div class="row px-4 py-2">
+                <div class="card border border-secondary">
+                    <div class="card-header">
+                      Wallet Details
+                    </div>
+                    <div class="card-body px-3 mx-4">
+                      <h3 class="card-title"><%= user.username %></h3>
+                      <h6 class="card-subtitle mt-2 text-muted">Wallet Balance</h6>
+                      <h4 class="card-text">RS <%= userWallet.balance %></h4>
+                    </div>
+                  </div>
+            </div>
+
+            <div class="row mt-4">
+                <h2 class="mb-0">Transactions</h2>
+            <hr class="mt-0">
+            <% userWallet.transactions.forEach(function(list){ %>
+                <div class="col-md-6">
+                    <div class="card my-2 border border-secondary">
+                        <div class="card-body">
+                            <% if(list.method === 'Credit') {%>
+                                <p class="card-text text-success m-0 mb- fs-5"><%= list.method %></p>
+                                <h4 class="card-title">Amount : <span class="text-success m-0 ">+<%= list.amount %> </span></h4>
+                                <% } else { %>
+                                    <p class="card-text text-danger m-0 mb- fs-5"><%= list.method %></p>
+                                    <h4 class="card-title">Amount : <span class="text-danger m-0 ">+<%= list.amount %> </span></h4>
+                                    <% } %>
+                          
+                          <h5 class="card-subtitle mb-2 ">Order Id : <%= list.order_id %></h5>
+                          
+                         <div class="d-flex justify-content-end">
+                            <a href="/order/<%= list.order_id %>" class="btn btn-secondary">View Order</a>
+                         </div>  
+                        </div>
+                      </div>
+                </div>
+                  <% }) %>
+            </div>
+
+    </div>
+
+    <%- include('../partials/footer.ejs') %>

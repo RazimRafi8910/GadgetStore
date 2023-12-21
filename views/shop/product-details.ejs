@@ -1,0 +1,162 @@
+<%- include('../partials/header.ejs') %>
+    <%- include('../partials/user-navbar.ejs') %>
+
+    <div class="container">
+        <div class="row my-5 p-2 border border-2" style="background-color: rgb(255, 255, 255);">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-12">
+                <div class="d-flex justify-content-center border my-4 p-3">
+                    <div id="carouselExampleControls" class="carousel slide  d-flex justify-content-between" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                          <div class="carousel-item active">
+                            <img src="<%= product.images[0] %>" class="d-block w-100" style=" height: 28rem;" alt="product image">
+                          </div>
+                          <% for(var i=1 ; i < product.images.length ; i++) {%>
+                          <div class="carousel-item ">
+                            <img src="<%= product.images[i] %>" class="d-block w-100" style=" height: 28rem;" alt="product image">
+                          </div>
+                          <% } %>
+
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+                          <span class="carousel-control-prev-icon btn-outline-secondary" aria-hidden="true"></span>
+                          <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+                          <span class="carousel-control-next-icon btn-outline-secondary" aria-hidden="true"></span>
+                          <span class="visually-hidden">Next</span>
+                        </button>
+                      </div>
+                      
+                </div>
+            </div>
+            <!--Product Details-->
+            <div class="col-xl-6 col-lg-6 col-md-6 col-12">
+                <div class=" mt-4 ms-3 ">
+                    <h4 class="title text-dark">
+                      <%= product.productName %>
+                      <br>
+                    </h4>
+                    <div class="d-flex flex-row">
+                      <% if(productReviews) { %>
+                      <div class="text-warning mb-1 me-2">
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                      </div>
+                      <span class="text-muted">
+                          <%= productReviews.productReview.length %> Reviews
+                      </span>
+                      <% } else {%>
+                        <span class="text-muted">
+                          no Reviews
+                        </span>
+                        <% } %>
+                        <% if(product.stock<=0) { %>
+                      <span class="text-danger ms-2 fw-bold">Out of stock</span>
+                      <% }else { %>
+                        <span class="text-success ms-2 fw-bold">In stock</span>
+                        <% } %>
+                    </div>
+                    <% if(product.category) { %>
+                    <span class="text-muted"> <%= product.category.categoryName %></span>
+                    <% } %>
+                  <div class="mb-3">
+                    <span class="h5">Rs <%= product.price %>/-</span>
+                  </div>
+                  <p>
+                    <%= product.description %>
+                  </p>
+                  <div class="row">
+                    <% product.specification.forEach(function(spec){ %>
+                      <span class="text-muted mb-2"><%= spec %></span>
+                      <% }) %>
+                      
+                  </div>
+                  <form action="/cart/<%= product._id %>/add" method="post">
+                    <div class=" my-1">
+                      <label for="quantity" class="mb-1 fs-5 d-block">Quantity</label>
+                      <div class="col-3 d-flex align-items-center">
+                        <button class="btn btn-dark" type="button" id="decreaseBtn">-</button>
+                        <input type="number" class="form-control text-center px-0 fw-bold" id="quantity" value="1" name="quantity" readonly>
+                        <button class="btn btn-dark" type="button" id="increaseBtn">+</button>
+                    </div>
+                    <% if(product.stock > 0) { %>
+                      <p class="card-text mx-2 mt-2"><small>Available <%= product.stock %></small></p>
+                    <% } %>
+                    </div>
+                  </div>
+                  <!-- <i class="me-1 fa fa-shopping-basket"></i> -->
+                <div class="d-flex justify-content-center mt-5">
+                  <button class="btn btn-secondary mx-1" type="button"><i class="fa-regular fa-heart"></i></button>
+                  <% if(product.stock<=0) { %>
+                    <button class="btn btn-danger mx-1 px-5 fw-bold" type="submit">Out of Stock</button>
+                    <% } else { %>
+                      <button class="btn btn-dark mx-1 px-5 fw-bold" type="submit">Add to Cart</button>                     
+                      <% } %>
+                </div>
+              </form>
+                </div>
+            </div>
+            <hr>
+
+
+        <div class="row mt-5">
+          <div class="col-xl-7 col-lg-7 col-md-7 col-12">
+            <div class="d-flex justify-content-center">
+              <h1 class="fw-bold">Review</h1>
+            </div>
+            <hr size="4">
+            <form action="/product/<%= product._id %>/review" method="post">
+            <div class="col-9 d-flex justify-content-center py-2 mx-4">
+              <input class="form-control py-2 border-secondary" type="text" placeholder="Review" name="review" aria-label="Review">
+                    <button class="btn btn-dark px-5" type="submit">Add</button>
+            </div>
+          </form>
+          </div>
+        </div>
+
+
+        <!--Product Review-->
+        <div class="row mt-4">
+          <% if(productReviews) { %>
+            <% productReviews.productReview.forEach(function(review){ %>
+              <div class="col-xl-5 col-lg-5 col-md-5 col-11 border border-secondary m-2 p-3">
+                <h3 class="m-0"><%= review.username %></h3>
+                <p><%= review.reviewDate.toLocaleDateString() %></p>
+                <p class="fs-5"><%= review.review %></p>
+              </div>
+              <% }) %>
+            <% } else { %>
+              <h3 class="m-0">No reviews on this product</h3>
+              <% } %>
+            </div>         
+         
+            
+
+
+    </div>
+
+    <%- include('../partials/footer.ejs') %>
+    <script>
+
+let quantity = 1;
+        const decreaseBtn = document.getElementById('decreaseBtn');
+        const increaseBtn = document.getElementById('increaseBtn');
+        const quantityInput = document.getElementById('quantity');
+      
+        decreaseBtn.addEventListener('click', () => {
+            if (quantity > 1) {
+                quantity--;
+                quantityInput.value = quantity;
+            }
+        });
+
+        increaseBtn.addEventListener('click', () => {
+            quantity++;
+            quantityInput.value = quantity;
+        });
+
+
+    </script>

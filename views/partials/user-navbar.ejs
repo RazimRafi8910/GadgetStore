@@ -1,0 +1,86 @@
+<!-- 
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark py-3">
+    <div class="container">
+      <a class="navbar-brand h5" href="#">GadgetStore</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse  nav justify-content-end" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item mx-3">
+            <a class="nav-link h6" href="/">Home</a>
+          </li>
+          <li class="nav-item mx-3">
+            <a class="nav-link h6 mb-0" href="#">Cart</a>
+          </li>
+          <li class="nav-item mx-3">
+            <a class="nav-link h6" href="/products">Products</a>
+          </li>
+          <li class="nav-item mx-3">
+            <a class="nav-link h6" href="#">Whishlist</a>
+          </li>
+          <li class="nav-item mx-3">
+            <a class="nav-link h6" href="/profile">Profile</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+ -->
+
+
+ 
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark py-3">
+  <div class="container">
+    
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse " id="navbarNav">
+      <a class="navbar-brand h5 my-2" href="/">GadgetStore</a>
+      <ul class="navbar-nav  me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" href="/">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/products">Shop</a>
+        </li>
+      </ul>
+    </div>   
+    <div class="d-flex align-items-center">
+      <!-- user cart -->
+      <div class="position-relative">
+        <a class="text-light mx-3 text-decoration-none" href="/cart">
+          <i class="fas fa-shopping-cart"></i>
+          <span>cart</span>
+         
+        </a>
+      </div>
+      <!-- Whishlist -->
+      <a class="text-light mx-3" href="#">
+        <i class="fa-solid fa-heart"></i>
+      </a>
+      <!-- profile -->
+      <% if( typeof user ==='undefined') { %> 
+        <div class="d-flex justify-content-center mx-3" style="width: 28px;">
+          <a class="text-secondary text-decoration-none text-light" href="/user/login">
+            Login
+          </a>
+        </div>
+      <% } else { %>
+        <div class="d-flex justify-content-center rounded-circle mx-3 bg-white" style="width: 28px;">
+          <a class="text-secondary text-decoration-none" href="/profile">
+            <i class="fa-solid fa-user"></i>
+          </a>
+        </div>
+        <% if(user.role === 'admin') {%>
+          <div class="d-flex justify-content-center mx-3" style="width: 28px;">
+            <a class="text-secondary text-decoration-none text-light" href="/admin">
+              Admin
+            </a>
+          </div>
+      <% }} %>
+    </div>
+  </div>
+</nav>
+

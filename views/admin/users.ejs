@@ -1,0 +1,102 @@
+
+<%- include('../partials/header.ejs') %>
+<%- include('../partials/admin-navebar.ejs')%>
+
+<div class="px-4 col-xl-10 col-lg-9 col-md-9 col-10">
+    
+    <h2 class="mt-4 fw-bold subheading px-5">Users</h2>
+    <hr size="4">
+
+    <div class="mx-5">
+        <div class="row mt-3">
+            <!-- <form class="d-flex col-lg-8 col-10 ms-4 my-3">
+                <input class="form-control me-1 py-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-dark px-3" type="submit">Search</button>
+            </form> -->
+            
+            <table id="userTable" class="table align-middle mt-3 pt-3 mb-0 bg-white">
+              <thead class="bg-light">
+                <tr>
+                  <th scope="col">Name</th>
+                  <th scope="col">Phone</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Role</th>
+                  <th scope="col">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if(users) { %>
+                  <% users.forEach(function(user){ %>
+                <tr>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <div class="ms-3">
+                        <p class="fw-bold mb-1"><%= user.username %></p>
+                        <p class="text-muted mb-0"><%= user.email %></p>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <p class="fw-normal mb-1"><%= user.number %></p>
+                  </td>
+                  <td>
+                    <p class="mb-1"><%= user.accountStatus %></p>
+                  </td>
+                  <td><%= user.role %></td>
+                  <td>
+                    <a href="/admin/user/<%= user._id %>/view" type="button" class="btn btn-sm btn-primary btn-rounded">Details</a>       
+                  </td>
+                </tr>
+                
+                </tr>
+                <% })} else { %>
+                  <h5>no users found</h5>
+                <% } %>
+              </tbody>
+            </table>
+
+        </div>
+    </div>
+
+    
+
+
+
+</div>
+</div>
+</div>
+</div>  
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+<script>
+  $(document).ready( function () {
+    $('#userTable').DataTable();
+} );
+</script>
+
+
+<!-- <div class="table-responsive">
+  <table class="table table-hover">
+      <thead class="table-white fs-5">
+        <tr>
+          <th scope="col">Username</th>
+          <th scope="col">Email</th>
+          <th scope="col">Phone</th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody class="table-secondary fs-5">
+          <% if(users) { %>
+              <% users.forEach(function(user){ %>
+        <tr></tr>
+          <th scope="row"><%= user.username %></th>
+          <td><%= user.email %></td>
+          <td><%= user.number %></td>
+          <td><a href="/admin/user/<%= user._id %>/view"><button class="btn btn-outline-dark fw-bold" type="button">View Details</button></a></td>
+        </tr> 
+        <% })} else { %>
+          <h5>no users found</h5>
+          <% } %>
+      </tbody>
+    </table>
+</div> -->
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>

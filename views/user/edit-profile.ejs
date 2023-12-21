@@ -1,0 +1,175 @@
+<%- include('../partials/header.ejs') %>
+    <%- include('../partials/user-navbar.ejs') %>
+
+
+    <div class="container">
+        <div class="row mt-4">
+            <h2 class="mb-0">Edit Profile</h2>
+            <hr class="mt-0">
+        </div>
+        <div class="row mb-2">
+            <form class="row mb- mt-2 g-3" id="myform" action="/profile/<%= user._id %>/add" method="post">
+                <% if( message.error ) { %>
+                    <div class="alert alert-danger" role="alert">
+                        <%= message.error %>
+                      </div>
+                      <% } %>
+                <div class="col-md-6">
+                    <div class="form-floating mb-3">
+                      <input type="text" class="form-control" value="<%= user.username %>" id="username" name="username" required>
+                      <label for="username">User Name</label>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                      <div class="form-floating mb-3">
+                          <input type="number" class="form-control" value="<%= user.number %>" id="Phone" name="number" required>
+                          <label for="Phone">Phone</label>
+                        </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-floating mb-3">
+                        <input type="email" class="form-control" value="<%= user.email %>" id="userEmail" name="email" required>
+                        <label for="floatingInput">Email</label>
+                            <p id="indicator" class="text-success ms-2">verified</p>
+                      </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mt-2">
+                        <!-- <% if(user.accountStatus !=='verified') { %>
+                        <a href="" class="btn btn-outline-dark px-3">verify</a>
+                        <% } %> -->
+                    </div> 
+                  </div>
+                <div class="col-md-7">
+                    <button type="submit" class="btn btn-sm btn-primary px-3">Update Profile </button>
+                </div>
+            </form>
+            </div>
+                <div class="row mt-3">
+                    <form action="" id="passwordForm" method="post">
+                    <h2>New Password</h2>
+                    <hr class="mt-0">
+
+                    <% if( message.password ) { %>
+                        <div class="alert alert-danger" role="alert">
+                            <%= message.password %>
+                          </div>
+                          <% } %>
+
+                    <div class="col-md-5">
+                        <div class="mb-3">
+                            <label for="exampleFormControlInput1" class="form-label ms-2">Password</label>
+                            <input type="text" class="form-control py-2" name="password" id="oldPassword" required>
+                          </div>
+                    </div>  
+                    <div class="col-md-5">
+                        <div class="mb-3">
+                            <label for="exampleFormControlInput1" class="form-label ms-2">New Password</label>
+                            <input type="text" class="form-control py-2" name="newPassword" id="newPassword" required>
+                          </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="mb-3">
+                            <label for="exampleFormControlInput1" class="form-label ms-2">Confrim</label>
+                            <input type="password" class="form-control py-2" name="confirmPassword" id="confirmPassword" required>
+                          </div>
+                    </div>
+                    <div class="mt-3">
+                        <button type="submit" class="btn btn-sm btn-primary">Change Password</button>
+                    </div>
+                </form>
+                </div>
+            
+        
+    </div>
+
+    <script>
+        let email = document.getElementById('userEmail');
+        let indicator = document.getElementById('indicator');
+        let oldEmail = email.value;
+
+        email.addEventListener('change',checkEmail);
+
+
+        let form = document.getElementById('myform')
+        let passwordForm = document.getElementById('passwordForm')
+
+        form.addEventListener('submit',updateProfile);
+        
+        async function updateProfile(){
+            event.preventDefault();
+
+        let data = new FormData(form);
+        let value = Object.fromEntries(data.entries());
+        let jsonValue = JSON.stringify(value);
+       
+            try {
+               let responce = await fetch(`/profile/edit`,{
+                    method:'PUT',
+                    body:jsonValue,
+                    headers:{
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if(responce.ok){
+                    let responceData = await responce.json();
+                    console.log(responceData);
+                    if(responceData.newEmail){
+                    window.location.href = '/verification'
+                } else if(responceData.inputValidation === false ) {
+                    window.location.href = '/profile/edit'
+                } else {
+                    window.location.href = '/profile'
+                }
+                }
+                
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        async function passwordChange(){
+            event.preventDefault();
+
+            let data = new FormData(passwordForm);
+            let value = Object.fromEntries(data.entries());
+            let jsonValue = JSON.stringify(value);
+
+            try {
+                let responce = await fetch('/profile/password/edit',{
+                    method:'PUT',
+                    headers:{
+                        'Content-Type': 'application/json'
+                    },
+                    body:jsonValue
+                })
+                
+                if(responce.ok){
+                    let responceData = await responce.json();
+                    if(responceData.passwordStatus){
+                        window.location.href = '/profile';
+                    } else {
+                        window.location.href = '/profile/edit';
+                    }                    
+                }
+            } catch (error) {
+                console.log(error)
+            }
+
+        }
+        passwordForm.addEventListener('submit',passwordChange);
+
+        function checkEmail() {
+        if (email.value !== oldEmail) {
+            indicator.textContent = "you need verify this account"; // Update the text content
+            indicator.classList.replace('text-success','text-danger')
+        } else {
+            indicator.textContent = "Verfiyed"; // Reset text content if values are the same
+            indicator.classList.replace('text-danger','text-success')
+        }
+    }
+
+    </script>
+    <%- include('../partials/footer.ejs') %>
+    

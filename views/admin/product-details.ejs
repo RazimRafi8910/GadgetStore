@@ -1,0 +1,148 @@
+<%- include('../partials/header.ejs') %>
+
+    <div class="container">
+        <div class="row mt-5">
+            <div class="col-xl-6 col-lg-6 col-md-6 col-12">
+                <div class="d-flex justify-content-center border border-secondary mt-4 p-3">
+                    <div id="carouselExampleControls" class="carousel slide d-flex justify-content-between" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                          <div class="carousel-item active">
+                            <img src="<%= product.images[0] %>" class="d-block w-100" style=" height: 28rem;" alt="product image">
+                          </div>
+                          <% for(var i=1 ; i < product.images.length ; i++) {%>
+                          <div class="carousel-item ">
+                            <img src="<%= product.images[i] %>" class="d-block w-100" style=" height: 28rem;" alt="product image">
+                          </div>
+                          <% } %>
+
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+                          <span class="carousel-control-prev-icon btn-outline-secondary" aria-hidden="true"></span>
+                          <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+                          <span class="carousel-control-next-icon btn-outline-secondary" aria-hidden="true"></span>
+                          <span class="visually-hidden">Next</span>
+                        </button>
+                      </div>
+                      
+                </div>
+            </div>
+            <!--Product Details-->
+            <div class="col-xl-6 col-lg-6 col-md-6 col-12">
+                <div class=" mt-4 ms-3 ">
+                    <h2 class="fw-bold"><%= product.productName %></h2>
+                    <p class="lead" style="font-weight: 400;"><%= product.description %></p>
+                  <div class="mt-5">
+                    <div class="d-flex justify-content-between my-1">
+                      <p class="second-heading fs-4 " style="font-weight: 500;">$Price</p>
+                      <p class="fw-bold fs-3"><%= product.price %></p>
+                    </div>
+                    <div class="d-flex justify-content-between my-1">
+                      <p class="second-heading fs-4 " style="font-weight: 500;">Brand</p>
+                      <p class="fw-bold fs-3"><%= product.brand %></p>
+                    </div>
+                    <div class="d-flex justify-content-between my-1">
+                      <p class="second-heading fs-4 " style="font-weight: 500;">Category</p>
+                      <p class="fw-bold fs-3"><%= product.category.categoryName %></p>
+                    </div>
+                    <div class="d-flex justify-content-between my-1">
+                      <p class="second-heading fs-4 " style="font-weight: 500;">Quandity</p>
+                      <div class="col-3 d-flex align-items-center">
+                        <button class="btn btn-dark" id="decreaseBtn">-</button>
+                        <input type="text" class="form-control text-center px-0 fw-bold" id="quantity" value="1" readonly>
+                        <button class="btn btn-dark" id="increaseBtn">+</button>
+                    </div>
+                    </div>
+                  </div>
+                    
+                <div class="d-flex justify-content-center mt-5">
+                  <button class="btn btn-secondary mx-1" type="button"><i class="fa-regular fa-heart"></i></button>
+                    <button class="btn btn-dark mx-1 px-5 fw-bold" type="button">Add to Cart</button>
+                </div>
+                </div>
+            </div>
+        </div>
+
+        <!--product Specification-->
+        <div class="row mt-5">
+          <div class="col-xl-7 col-lg-7 col-md-7 col-12">
+            <div class="d-flex justify-content-center">
+              <h1 class="fw-bold">Specification</h1>
+            </div>
+            <hr size="4">
+            <div class="mx-3 my-4">
+              <% product.specification.forEach(function(spec){ %>
+              <p class=" fw-bold fs-4 my-4 second-heading"><%= spec %></p>
+              <% }) %>
+            </div>
+          </div>
+        </div>
+
+        <div class="row mt-5">
+          <div class="col-xl-7 col-lg-7 col-md-7 col-12">
+            <div class="d-flex justify-content-center">
+              <h1 class="fw-bold">Review</h1>
+            </div>
+            <hr size="4">
+            <div class="col-9 d-flex justify-content-center py-2 mx-4">
+              <input class="form-control py-2 border-secondary" type="text" placeholder="Review" aria-label="Review">
+                    <button class="btn btn-dark px-5" type="submit">Add</button>
+            </div>
+          </div>
+        </div>
+
+
+        <!--Product Review-->
+        <div class="row mt-4">
+
+              <div class="col-xl-5 col-lg-5 col-md-5 col-11 border border-secondary m-2 p-3">
+                <h3 class="m-0">Username</h3>
+                <p>10/10/2023</p>
+                <p class="fs-5">users review about the product. reviews are displayed here. user can add thier review about the product.
+                  this is the example review for testing
+                </p>
+              </div>
+              <div class="col-xl-5 col-lg-5 col-md-5 col-11 border border-secondary m-2 p-3">
+                <h3 class="m-0">Username</h3>
+                <p>10/10/2023</p>
+                <p class="fs-5">users review about the product. reviews are displayed here. user can add thier review about the product.
+                  this is the example review for testing
+                </p>
+              </div>
+              <div class="col-xl-5 col-lg-5 col-md-5 col-11 border border-secondary m-2 p-3">
+                <h3 class="m-0">Username</h3>
+                <p>10/10/2023</p>
+                <p class="fs-5">users review about the product. reviews are displayed here. user can add thier review about the product.
+                  this is the example review for testing
+                </p>
+              </div>
+            </div>         
+         
+          </div>
+            
+
+
+    </div>
+
+    <%- include('../partials/footer.ejs') %>
+    <script>
+
+let quantity = 1;
+        const decreaseBtn = document.getElementById('decreaseBtn');
+        const increaseBtn = document.getElementById('increaseBtn');
+        const quantityInput = document.getElementById('quantity');
+
+        decreaseBtn.addEventListener('click', () => {
+            if (quantity > 1) {
+                quantity--;
+                quantityInput.value = quantity;
+            }
+        });
+
+        increaseBtn.addEventListener('click', () => {
+            quantity++;
+            quantityInput.value = quantity;
+        });
+
+    </script>

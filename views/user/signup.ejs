@@ -1,0 +1,64 @@
+<%- include('../partials/header.ejs') %>
+  <%- include('../partials/user-navbar.ejs') %>
+
+<style>
+  input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+</style>
+
+  <section class="vh-100 gradient-custom">
+    <div class="container py-2 h-100">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-12 col-md-8 col-lg-6 col-xl-5">
+          <div class="card bg-dark text-white" style="border-radius: 1rem;">
+            <div class="card-body p-5 text-center">
+  
+              <div class="mb-md-2 mt-md-2 pb-5">
+  
+                <h2 class="fw-bold mb-2">Sign up</h2>
+                <% if(  message.error ) { %>
+                  <p class="text-danger mb-5"> <%= message.error %> </p>
+                  <% } else { %>
+                    <p class="text-white-50 mb-4">Please enter your details</p>
+                    <% } %>
+          <form action="/signup" method="post">
+                <div class="form-outline form-white mb-4">
+                  <label class="form-label" for="typeEmailX">Name</label>
+                  <input type="text" id="typeEmailX" class="form-control form-control-lg" name="username" required/>
+                </div>
+  
+                <div class="form-outline form-white mb-4">
+                  <label class="form-label" for="typeEmailX">Phone</label>
+                  <input type="number" id="typeEmailX" class="form-control form-control-lg" name="number" required/>
+                </div>
+  
+                <div class="form-outline form-white mb-4">
+                  <label class="form-label" for="typeEmailX">Email</label>
+                  <input type="email" id="typeEmailX" class="form-control form-control-lg" name="email" required/>
+                </div>
+  
+                <div class="form-outline form-white mb-4">
+                  <label class="form-label" for="typePasswordX">Password</label>
+                  <input type="password" id="typePasswordX" class="form-control form-control-lg" name="password" required/>
+                  
+                </div>
+                <button class="btn btn-outline-light fw-bold border border-2 px-5 pb-2 rounded-pill" type="submit">Signup</button>
+          </form>
+              </div>
+          
+              <div>
+                <p class="mb-0"> have an account? <a href="/user/login" class="text-white-50 fw-bold">login</a>
+                </p>
+              </div>
+  
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+

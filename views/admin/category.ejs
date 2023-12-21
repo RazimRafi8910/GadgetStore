@@ -1,0 +1,131 @@
+<%- include('../partials/header.ejs') %>
+<%- include('../partials/admin-navebar.ejs')%>
+
+<div class="px-4 col-xl-10 col-lg-9 col-md-9 col-10">
+    <h2 class="mt-4 fw-bold subheading px-5">Category</h2>
+    <hr size="4">
+
+    <% if( message.message ) { %>
+      <div class="alert alert-success" role="alert">
+          <%= message.message %>
+        </div>
+        <% } %>
+        <% if( message.error ) { %>
+          <div class="alert alert-danger" role="alert">
+              <%= message.error %>
+            </div>
+            <% } %>
+
+    <div class="row">
+        <div class="mx-5 col-xl-8 col-lg-4 col-md-4 col-4">
+
+            <h4 class="mt-4 fs-3 fw-bold second-heading">New Category</h4>
+            <hr class="mt-0 mb-4">
+            <form action="/admin/category" method="post">
+                <label for="categoryName" class="form-label fs-4 mt-3 mb-0 third-heading">Category Name</label>
+                <input type="text" class="form-control py-3 border-3 border-secondary" id="Product Name" name="categoryName" required>
+
+                <button class="btn btn-secondary fs-5 border-dark fw-bold px-5 my-4" type="submit">Save Category</button>
+            </form>
+            
+
+            <h4 class="mt-4 fs-3 fw-bold second-heading">All Categorys</h4>
+            <hr class="mt-0 mb-2">
+
+        <table class="table mb-5">
+            <thead>
+              <tr>
+                <th></th>
+                <th scope="col">Name</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+                <% if(categorys === 'undefined'){ %>
+                    <h4>no category found</h4>
+                    <% } else { %>
+                      <% let serialNumber = 1; %>
+                <% categorys.forEach(function(eachCategory){ %>
+              <tr>
+                <th scope="row"><%= serialNumber %></th>
+                <td><%= eachCategory.categoryName %></td>
+                <!-- <td>
+                  <form action="/" name="categoryForm" onsubmit="return validateForm()" method="post">
+                    Category : <input type="text" name="categoryName">
+                    <input type="submit" value="submit">
+                  </form>
+                </td> -->
+                <td>
+                  <button type="button" class="btn btn-danger border-dark px-3 py-1" data-bs-toggle="modal" data-bs-target="#deleteCategory" 
+                  onclick="setCategoryId('<%= eachCategory._id %>')">Delete
+                </button>
+                </td>
+              </tr>
+              <% serialNumber++; %>
+              <% })}%>
+            </tbody>
+          </table>
+        </div>
+    </div>
+    
+  <!--modal for delete category-->
+  <div class="modal fade" id="deleteCategory" tabindex="-1" aria-labelledby="deleteCategory" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Do you want to delete this category?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-danger" onclick="confirmDelete()">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    
+
+  
+
+
+
+</div>
+</div>
+</div>
+</div>
+<script>
+
+let currentCategoryId;  // Variable to store the current category ID
+
+function setCategoryId(categoryId) {
+  currentCategoryId = categoryId;
+}
+
+// function validateForm() {
+//   let x = document.forms["categoryForm"]["categoryName"].value;
+//   if (x == " ") {
+//     alert("Name must be filled out");
+//     return false;
+//   }
+// }
+  
+async function confirmDelete(){
+  try {
+    
+    let response = await fetch(`/admin/category/${currentCategoryId}`,{
+        method:'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        }});
+        window.location.reload();
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>

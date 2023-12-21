@@ -1,0 +1,93 @@
+<%- include('../partials/header.ejs') %>
+    <%- include('../partials/user-navbar.ejs') %>
+
+<style>
+     input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+</style>
+    
+    <div class="container">
+        <div class="row mt-5">
+            <h2 class="mb-0">Add New Address</h2>
+            <hr class="mt-0">
+        </div>
+
+        <% if( message.message ) { %>
+          <div class="alert alert-success" role="alert">
+              <%= message.message %>
+            </div>
+            <% } %>
+            <% if( message.error ) { %>
+              <div class="alert alert-danger" role="alert">
+                  <%= message.error %>
+                </div>
+                <% } %>
+
+            <form class="row mb-5 mt-2 g-3" action="/address/<%= user._id %>/add" method="post">
+                <div class="col-md-6">
+                  <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="floatingInput" name="houseName">
+                    <label for="floatingInput">House name</label>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="floatingInput" name="town">
+                        <label for="floatingInput">Town</label>
+                      </div>
+                </div>
+                <div class="form-floating">
+                    <textarea class="form-control" name="address" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
+                    <label for="floatingTextarea2" class="text-muted">Address (street and area)</label>
+                  </div>
+                <div class="col-md-6">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="floatingInput" name="city">
+                        <label for="floatingInput">City</label>
+                      </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="floatingInput" name="state">
+                        <label for="floatingInput">State</label>
+                      </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-floating mb-3">
+                        <input type="number" class="form-control" id="floatingInput" name="pincode">
+                        <label for="floatingInput">Pincode</label>
+                      </div>
+                </div>
+                <div class="col-12 d-flex">
+                    <div class="form-check mx-2">
+                        <input class="form-check-input" type="radio" value="home" name="addressType" id="flexRadioDefault1" checked>
+                        <label class="form-check-label" for="flexRadioDefault1">
+                          Home
+                        </label>
+                      </div>
+                      <div class="form-check mx-2">
+                        <input class="form-check-input" type="radio" value="work" name="addressType" id="flexRadioDefault2">
+                        <label class="form-check-label" for="flexRadioDefault2">
+                          Work
+                        </label>
+                      </div>
+                </div>
+                <div class="col-12  ">
+                  <button type="submit" class="btn btn-primary">Add Address</button>
+                </div>
+              </form>
+
+              <div class="row">
+
+              </div>
+
+    </div>
+    
+
+
+
+
+    <%- include('../partials/footer.ejs') %>

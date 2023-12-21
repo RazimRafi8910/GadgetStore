@@ -1,0 +1,102 @@
+<%- include('../partials/header.ejs') %>
+<%- include('../partials/admin-navebar.ejs')%>
+
+
+<div class="px-4 col-xl-10 col-lg-9 col-md-9 col-10">
+    <div class="d-flex justify-content-between">
+        <h2 class="mt-4 fw-bold subheading px-5">Coupons</h2>
+        <a href="/admin/coupon/add">
+            <button type="button" class="btn btn-primary mt-4 mx-4 px-5 fw-bold">Add Coupons</button> 
+        </a>
+    </div>
+    
+    <hr size="4">
+    <% if( message.message ) { %>
+      <div class="alert alert-success" role="alert">
+          <%= message.message %>
+        </div>
+        <% } %>
+        <% if( message.error ) { %>
+          <div class="alert alert-danger" role="alert">
+              <%= message.error %>
+            </div>
+            <% } %>
+    <div class="row mx-3">
+        <h2>Coupons</h2>
+        <hr>
+    </div>
+    <div class="row mx-4 mt-3">
+      <div class="col-lg-2 col-md-3">
+        <h6>Coupon Name</h6>
+      </div>
+        <div class="col-lg-3 col-md-3">
+          <h6>Description</h6>
+        </div>
+        <div class="col-lg-2 col-md-3 text-center">
+          <h6>Discount</h6>
+        </div>
+        <div class="col-lg-2 col-md-2 text-center">
+          <h6>Expiry Date</h6>
+        </div>
+        <div class="col-lg-2 col-md-2 text-center">
+          <h6>Code</h6>
+        </div>
+        <div class="col-lg-1 col-md-2 text-center">
+          <h6>Action</h6>
+        </div>
+      </div>
+      <div class="mx-4">
+      <% if(coupons) {%>
+        <% coupons.forEach(function(coupon){ %>
+        <div class="card border border-secondary" >
+            <div class="row g-0 d-flex align-items-center px-2">
+              
+              <div class="col-lg-2 col-md-3">
+                <div class="card-body px-2">
+                    
+                  <h5 class="card-title fw- text-start"><%= coupon.couponName %></h5>
+                </div>
+              </div>
+              <div class="col-lg-3 col-md-3">
+                <div class="card-body px-2">
+                    
+                  <p class="card-title fw- text-start"><%= coupon.description %></p>
+                </div>
+              </div>
+              <div class="col-lg-2 col-md-3">
+                <div class="card-body text-center">
+                    
+                  <h6 class="card-title">%<%= coupon.discount %></h6>
+                </div>
+              </div>
+              <div class="col-lg-2 col-md-2">
+                <div class="card-body text-center">
+                    <h6 class="card-title"><%= coupon.expriyDate.toLocaleString('default',{day: 'numeric', month: 'numeric', year: 'numeric'}) %></h6>
+                </div>
+              </div>
+              <div class="col-lg-2 col-md-2">
+                <div class="card-body text-center">
+                    
+                  <p class="card-title fw-bold"><%= coupon.code %></p>
+                </div>
+              </div>
+              <div class="col-lg-1 col-md-2 ">
+                <div class="card-body d-flex">
+                    
+                    <a href="/admin/orders"><button class="btn btn-outline-dark fw-bold" type="button"><i class="fa-solid fa-pen-to-square"></i></button></a>
+                    <a href="/admin/orders"><button class="btn btn-outline-dark fw-bold" type="button"><i class="fa-solid fa-pen-to-square"></i></button></a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <% })} else {%>
+            <h4>no Coupons found</h4>
+            <% } %>
+          </div>
+
+
+
+</div>
+</div>
+</div>
+</div>
