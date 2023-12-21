@@ -88,14 +88,16 @@
               </div>
               <div class="d-flex justify-content-between">
                 <p class="m-2">Coupons</p>
-                <% console.log(userCart) %>
                 <% if(userCart.coupon) {%>
                   <p class="text-success m-0">Coupon Added</p>
                   <% } else { %>
-                <a  data-bs-toggle="modal" data-bs-target="#addCoupon" class="m-2 text-dark">Add coupon</a>
-                <% if(message.couponError) {%>
-                  <p class="text-danger"><%= message.couponError %></p>
-                  <% }} %>
+                    <div class="text-end">
+                      <a  data-bs-toggle="modal" data-bs-target="#addCoupon" class="m-2 text-dark ">Add coupon</a>
+                      <% if(message.couponError) {%>
+                        <p class="text-danger m-0"><%= message.couponError %></p>
+                        <% } %>
+                      </div>
+                      <% } %>
               </div>
               <div class="d-flex justify-content-between">
                 <p class="m-2">Discount:</p>

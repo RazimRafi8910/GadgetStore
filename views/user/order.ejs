@@ -13,6 +13,11 @@
                   <%= message.error %>
                 </div>
                 <% } %>
+                <% if( message.newCoupon ) { %>
+                  <div class="alert alert-success text-center" role="alert">
+                      <%= message.newCoupon %>
+                    </div>
+                    <% } %>
       </div>
       
     </div>
@@ -126,7 +131,13 @@
           </div>
           <div class="d-flex justify-content-between">
             <p class="m-2">Payment:</p>
+            <% if(userOrder.paymentMethod === 'cashOnDelivery') {%>
             <p class="m-2 text-dark">Cash On Delivery</p>
+            <% } else if(userOrder.paymentMethod === 'PaidOnWallet') { %>
+              <p class="m-2 text-success">Paid with Wallet</p>
+              <% } else { %>
+                <p class="m-2 text-success">Paid</p>
+                <% } %>
           </div>
           <hr />
           <div class="d-flex justify-content-between">

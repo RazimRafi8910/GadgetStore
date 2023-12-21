@@ -36,10 +36,9 @@
                         </div>
                         <a href="/profile/edit" class="btn btn-outline-dark fw-bold px-4 ">Edit</a>
                         <a href="/logout" class="btn btn-outline-danger fw-bold px-4 ">Logout</a>
+                        <% if(userWallet) { %>
                         <a href="/wallet" class="btn btn-outline-primary fw-bold px-4 ">Wallet</a>
-                        <!-- <% if(userWallet) { %>
-                        <a href="/wallet" class="btn btn-outline-primary fw-bold px-4 ">Wallet</a>
-                        <% } %> -->
+                        <% } %>
                     </div>
                   </div>
 
@@ -182,6 +181,11 @@
               <h2 class="mb-0">Coupons</h2>
             <hr class="mt-0">
             </div>
+            <% if(userDetails.coupons.length === 0) {%>
+              <div class="d-flex justify-content-center">
+                <h3 class="m-4">no Coupons found</h3>
+              </div>      
+              <% } %>
             <div class="row  mx-4">
               <% userDetails.coupons.forEach(function(item){ %>
               <div class="col-sm-4">
