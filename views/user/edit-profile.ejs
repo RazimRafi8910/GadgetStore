@@ -114,7 +114,6 @@
                 
                 if(responce.ok){
                     let responceData = await responce.json();
-                    console.log(responceData);
                     if(responceData.newEmail){
                     window.location.href = '/verification'
                 } else if(responceData.inputValidation === false ) {

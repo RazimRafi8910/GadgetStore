@@ -14,7 +14,7 @@
               <!-- Checkout -->
               <div class="card shadow-0 border">
                 <div class="p-4">
-                  <form action="/order/<%= userCart._id %>/create" method="post">
+                  <form id="checkoutForm" action="/order/<%= userCart._id %>/create" method="post">
                   <h5 class="card-title mb-2">Address</h5>
                   <hr class="my-2" />
                   <div class="row mb-3">
@@ -55,6 +55,7 @@
                     <div class="col-lg-6 my-3">
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" name="paymentMethod" id="inlineRadio2" value="onlinePayment" >
+                            <input class="d-none form-check-input" value="<%= userCart._id %>"  id="cartId">
                             <label class="form-check-label" for="inlineRadio2">Online Payment</label>
                           </div>
                     </div>
@@ -139,7 +140,7 @@
       
 
     <%- include('../partials/footer.ejs') %>
-
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script>
 
       let walletBalance = document.getElementById('walletBalance');
@@ -161,5 +162,77 @@
           indicator.classList.replace('text-danger','text-success')
         }
       }
+
+      //order create api call
+      let cart_Id = document.getElementById('cartId');
+      let cartId = cart_Id.value;
+
+      let form = document.getElementById('checkoutForm')
+      form.addEventListener('submit',orderCreate);
+
+      async function orderCreate(){
+        event.preventDefault();
+
+        let data = new FormData(form);
+        let value = Object.fromEntries(data.entries());
+        let jsonValue = JSON.stringify(value);
+
+        try {
+          let responce = await fetch(`/order/${cartId}/create`,{
+            method:"POST",
+            body:jsonValue,
+            headers:{
+                'Content-Type': 'application/json'
+            }
+          });
+
+          if(responce.ok){
+
+            let responceData = await responce.json();
+
+            if(responceData.success){
+              if(responceData.payment){
+                console.log(responceData.razorPayOrder)
+                console.log(responceData.user);
+                let orderId = responceData.orderId
+                razorpayPayment(responceData.razorPayOrder,responceData.user,orderId);
+                // window.location.href = `/order/${responceData.orderId}`
+              }else {
+                window.location.href = `/order/${responceData.orderId}`
+              }
+            }
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }
+
+
+    function razorpayPayment (razorPayOrder,user,orderId){
+      var options = {
+    "key": "rzp_test_7utK5Bw7ikRVRU", // Enter the Key ID generated from the Dashboard
+    "amount": razorPayOrder.amount * 100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    "currency": "INR",
+    "name": "GadgetStore", //your business name
+    "description": "Test Transaction",
+    "order_id": razorPayOrder.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+    "callback_url":`/order/${orderId}/verfiy`,
+    "prefill": { //We recommend using the prefill parameter to auto-fill customer's contact information especially their phone number
+        "name": user.username, //your customer's name
+        "email": user.email,
+        "contact": `${user.number}` //Provide the customer's phone number for better conversion rates 
+      },
+      "notes": {
+          "address": "Razorpay Corporate Office"
+      },
+      "theme": {
+          "color": "#3399cc"
+      }
+    };
+    console.log('werf')
+    let rzp1 = new Razorpay(options);
+    rzp1.open();
+
+    }
 
     </script>

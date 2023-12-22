@@ -11,6 +11,7 @@ const isValidInput = require('../config/inputValidation');
 const { GenerateOTP } = require("../config/OTPauth");
 const OrderReturn = require('../models/orderReturn');
 const Coupon = require('../models/coupon');
+const razorPayOrderGenerate = require('../config/razorPay');
 
 module.exports = {
   
@@ -631,6 +632,7 @@ module.exports = {
     let orderItems = userCart.items;
     let orderStatus = 'Processing';
     let totalPrice = 0
+    let discountPrice = 0;
 
     //calculating total price and removing the stock from the product data
     userCart.items.forEach(async (item) => {
@@ -640,19 +642,20 @@ module.exports = {
     });
 
     //coupon discount to total price
-    let discountPrice = 0;
     if (userCart.discount > 0) {
       discountPrice = (totalPrice / 100) * userCart.discount;
       totalPrice = totalPrice - discountPrice;
       //updating user coupon is used
-      let result = await User.findOneAndUpdate({ _id: user._id, "coupons.coupon_id": userCart.coupon }, { $set: { "coupons.$.isUsed": true } }, { new: true });
+      await User.updateOne({ _id: user._id, "coupons.coupon_id": userCart.coupon }, { $set: { "coupons.$.isUsed": true } }, { new: true });
     };
 
     //checks the wallet balance and input amount
     if (walletAmount) {
+
       if (walletAmount > userWallet.balance || walletAmount > totalPrice){
         req.flash('error', 'The wallet balance exceeds the expected amount');
-        return res.redirect(`/cart/${userCartId}/checkout`);
+        return res.status(200).json({ success: false });
+        
       } else {
         if (totalPrice == walletAmount) {
           paymentMethod = 'PaidOnWallet';
@@ -662,6 +665,7 @@ module.exports = {
       };
     };
 
+    //order creating
     let order = await Order.create({
       user_id: user._id,
       orderAddress: addressId,
@@ -673,7 +677,7 @@ module.exports = {
 
     if (!order) {
       req.flash('error', 'order not created');
-      return res.redirect('/cart');
+      return res.status(200).json({ success: false });
     }
 
     if (walletAmount) {
@@ -701,26 +705,48 @@ module.exports = {
       if (!user.coupon) {
         userResult = await User.updateOne({ _id: user._id }, { $set: { coupons: userCoupon } });
       } else {
+
         let isCouponHave
         user.coupons.forEach((coupon) => {
           if (coupon.coupon_id == coupon._id) {
             isCouponHave = true;
           }
         });
+
         if (!isCouponHave) {
           userResult = await User.updateOne({ _id: user._id }, { $push: { coupons: userCoupon } });
-        }    
+        }
+        
       };
       req.flash('newCoupon', 'You got new %20 off Coupon');
+    };
+
+    await Cart.deleteOne({ _id: userCart._id });
+
+    if (totalPrice !== walletAmount && paymentMethod === 'onlinePayment') {
+      let razorPayOrder = await razorPayOrderGenerate(order._id, order.totalPrice);
+      return res.status(200).json({ success: true, payment: true, orderId: order._id, razorPayOrder,user });
     }
     
-    await Cart.deleteOne({ _id: userCart._id });
     req.flash('message', 'your order has been successfully created');
-    res.redirect(`/order/${order._id}`)
+    res.status(200).json({ success: true, payment: false, orderId: order._id });
     
   } catch (error) {
     next(error)
   }
+  },
+
+  orderPaymentVerify: async (req, res, next) => {
+    try {
+      let orderId = req.params.order_id;
+      let { razorpay_payment_id } = req.body;
+      if (razorpay_payment_id) {
+        req.flash('message', 'Payment success');
+      }
+      res.redirect(`/order/${orderId}`);
+    } catch (error) {
+      next(error);
+    }
   },
 
   returnOrder: async (req, res, next) => {
@@ -762,6 +788,7 @@ module.exports = {
 
   cancelOrder: async (req, res, next) => {
     try {
+      let user = req.user;
       let orderId = req.params.order_id;
       let order = await Order.findOneAndUpdate({ _id: orderId },{$set:{orderStatus:'Cancelled'}});
 
@@ -771,6 +798,31 @@ module.exports = {
         let currentStock = product.stock + item.quantity;
         await Product.updateOne({ _id: item.product }, { $set: { stock: currentStock } });
       })
+
+      if (order.paymentMethod === 'onlinePayment') {
+        let userWallet = await Wallet.findOne({ user_id: order.user_id });
+        let transactions = [{
+          order_id: order._id,
+          method: 'Credit',
+          amount: order.totalPrice
+        }]
+
+        if (!userWallet) {
+          userWallet = await Wallet.create({
+            user_id: order.user_id,
+            balance: order.totalPrice,
+            transactions
+          })
+        } else {
+          //updating user wallet
+          let balance = userWallet.balance + order.totalPrice;
+          await Wallet.updateOne({ _id: userWallet._id }, {
+            $push: { transactions: transactions },
+            $set: { balance: balance }
+          });
+        }
+      }
+
       res.redirect('/')
     } catch (error) {
       next(error);

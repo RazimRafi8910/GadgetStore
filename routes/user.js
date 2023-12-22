@@ -31,6 +31,7 @@ router.post('/cart/:cart_id/coupon/add', authenticateUser, userController.coupon
 
 //order 
 router.get('/order/:order_id', authenticateUser, userController.orderPage);
+router.post('/order/:order_id/verfiy', authenticateUser, userController.orderPaymentVerify);
 router.post('/order/:cart_id/create', authenticateUser, userController.createOrder);
 router.put('/order/:order_id/cancel', authenticateUser, userController.cancelOrder);
 router.post('/order/:order_id/return', authenticateUser, userController.returnOrder);
