@@ -155,7 +155,11 @@ module.exports = {
         let { productName, price, brand, category, specification, description, stock } = req.body;
       
       //input validation 
-      let validationResult = isValidInput([productName, brand, description]);
+      let validationResult = isValidInput([productName, brand]);
+      if (description.trim() === "" ) {
+        console.log(description);
+        validationResult = false;
+    }
       if (!validationResult || price <= 0 || stock < 0) {
         req.flash('error', 'Invalid Inputs');
         return res.redirect('/admin/product/add');
@@ -454,6 +458,42 @@ module.exports = {
     }
   },
 
+  editCategoryPage: async (req, res, next) => {
+    try {
+      let categoryId = req.params.category_id;
+      let category = await Category.findOne({ _id: categoryId });
+      res.render('admin/edit-category', {
+        tittle: 'GadgetStore | Edit Category',
+        category,
+        message: req.flash()
+      })
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  editCategory: async(req, res, next)=>{
+    try {
+      let categoryId = req.params.category_id;
+      let { categoryName } = req.body;
+      let result = isValidInput(categoryName);
+      if (!result) {
+        req.flash('error', 'Invalid Input');
+        return res.status(200);
+      };
+      let category = await Category.findOneAndUpdate({ _id: categoryId }, { $set: { categoryName } });
+      if (!category) {
+        req.flash('error', 'not updated');
+        return res.status(200);
+      }
+      
+      req.flash('message', 'Category edited');
+      return res.status(200).json({ success: true });
+    } catch (error) {
+      next(error);
+    }
+  },
+
   deleteCategory: async (req, res, next) => {
     try {
       let categoryId = req.params.id;
@@ -598,6 +638,18 @@ module.exports = {
 
       req.flash('message', 'Coupon Created');
       res.redirect('/admin/coupons');
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  deleteCoupon: async (req, res, next) => {
+    try {
+      let couponId = req.params.id;
+      let coupon = await Coupon.findOneAndDelete({ _id: couponId });
+      if (coupon) {
+        res.status(200).json({ success: true });
+      }
     } catch (error) {
       next(error);
     }

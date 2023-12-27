@@ -43,9 +43,9 @@
               </a>
                 <div class="d-flex align-items-end pt-1 px-0 pb-0 mt-auto">
                   <button type="button" onclick="addToCart('<%= product._id %>')" class="btn btn-dark shadow-0 me-1">Add to cart</button>
-                  <a href="" class="btn btn-light border px-2 pt-2 icon-hover">
-                    <i class="fas fa-heart fa-lg text-secondary px-1"></i>
-                  </a>
+                  <button type="button" onclick="addToWishlist('<%= product._id %>')" class="btn btn-outline-secondary border px-2 pt-2 icon-hover">
+                    <i class="fas fa-heart fa-lg y px-1"></i>
+                  </button>
                 </div>
                 <% if(product.stock==0) {%>
                   <p class="card-text text-danger fw-bold mx-2 mt-2"><small>Out of stock</small></p>
@@ -80,9 +80,10 @@
               </a>
                 <div class="d-flex align-items-end pt-1 px-0 pb-0 mt-auto">
                   <button type="button" onclick="addToCart('<%= product._id %>')" class="btn btn-dark shadow-0 me-1">Add to cart</button>
-                  <a href="" class="btn btn-light border px-2 pt-2 icon-hover">
-                    <i class="fas fa-heart fa-lg text-secondary px-1"></i>
-                  </a>
+                  
+                  <button type="button" onclick="addToWishlist('<%= product._id %>')" class="btn btn-outline-secondary border px-2 pt-2 icon-hover">
+                    <i class="fas fa-heart fa-lg y px-1"></i>
+                  </button>
                 </div>
                 <% if(product.stock==0) {%>
                 <p class="card-text text-danger mx-2 mt-2"><small>Out of stock</small></p>
@@ -206,6 +207,23 @@ if (!sessionStorage.getItem("modal")) {
 }
 
 });
+
+async function addToWishlist(productId){
+  try {
+    let responce = await fetch(`/wishlist/${productId}/add`,{
+      method:'PUT',
+      headers:{
+        'Content-Type': 'application/json',
+      }
+    });
+    console.log(responce)
+    if(responce.ok){
+      window.location.reload()
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 async function addToCart(productId){
   try {

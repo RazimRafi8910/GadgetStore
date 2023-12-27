@@ -34,6 +34,7 @@
                                     <% } %>
                           
                           <h5 class="card-subtitle mb-2 ">Order Id : <%= list.order_id %></h5>
+                          <h6 class="card-subtitle mb-2 ">Date : <%= list.date.toLocaleString('default',{day: 'numeric', month: 'numeric', year: 'numeric'}) %></h6>
                           
                          <div class="d-flex justify-content-end">
                             <a href="/order/<%= list.order_id %>" class="btn btn-secondary">View Order</a>

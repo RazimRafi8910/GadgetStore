@@ -56,20 +56,13 @@
     <div class="row d-flex">
       <div class="col-lg-3 border border-secondary">
         <form action="/products" method="get">
-        <!-- <div class="input-group my-4">
-        <label for="categorySelect" class="form-label fs-4 fw-bold">Sort by :</label>
-                <select class="form-select py-2 mx-2 border border-secondary" id="categorySelect" name="category" required>
-                  <option selected>Choose...</option>
-                  <option value="price" >Price A-Z</option>
-                  <option value="price" >Price Z-A</option>
-                </select> 
-          </div> -->
+       
         <div class="mb-5 mt-3">
             <h2>Categorys</h2>
             <hr>
               <div class="input-group ">
                 <div class="dropdown w-100 d-flex justify-content-center">
-                  <a class="btn btn-outline-dark  ps-4 fs-5 w-75 text-start text-muted" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                  <!-- <a class="btn btn-outline-dark  ps-4 fs-5 w-75 text-start text-muted" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
                     <% if(filterCategory == 'All') {%>
                       All 
                       <% } else { %>
@@ -86,7 +79,23 @@
                     <% categorys.forEach(function (category) { %> 
                     <li><a class="dropdown-item" href="/products?category=<%= category._id %>"><%= category.categoryName %></a></li>
                     <% }) %>
-                  </ul>
+                  </ul> -->
+
+                  <select class="form-select border border-secondary py-2 w-75" name="category" id="inputGroupSelect01">
+                    <% if(filterCategory == 'All') {%>
+                    <option selected>All</option>
+                    <% } else { %>
+                      <% categorys.forEach(function (category) { %>
+                        <% if(filterCategory == category._id ) {%>
+                          <option >All</option>
+                          <option value="<%= category._id %>" selected><%= category.categoryName %></option>
+                          <% }})} %>
+                          
+                    <% categorys.forEach(function (category) { %> 
+                    <option value="<%= category._id %>"><%= category.categoryName %></option>
+                    <% }) %>
+                  </select>
+
                 </div>
             </div>
         </div>
@@ -206,9 +215,9 @@
                         </a>
                           <div class="d-flex align-items-end pt-1 px-0 pb-0 mt-auto">
                             <button type="button" onclick="addToCart('<%= product._id %>')" class="btn btn-dark shadow-0 me-1">Add to cart</button>
-                            <a href="" class="btn btn-light border px-2 pt-2 icon-hover">
-                              <i class="fas fa-heart fa-lg text-secondary px-1"></i>
-                            </a>
+                            <button type="button" onclick="addToWishlist('<%= product._id %>')" class="btn btn-outline-secondary border px-2 pt-2 icon-hover">
+                              <i class="fas fa-heart fa-lg y px-1"></i>
+                            </button>
                           </div>
                           <% if(product.stock==0) {%>
                             <p class="card-text text-danger mx-2 mt-2"><small>Out of stock</small></p>
@@ -271,6 +280,23 @@ function filterProduct() {
   // Redirect to the filtered-products page with the selected value as a query parameter
   //window.location.href = url;
 }
+
+async function addToWishlist(productId){
+  try {
+    let responce = await fetch(`/wishlist/${productId}/add`,{
+      method:'PUT',
+      headers:{
+        'Content-Type': 'application/json',
+      }
+    });
+    if(responce.ok){
+      window.location.reload()
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 console.log(selectedValue)
     async function addToCart(productId){
   try {

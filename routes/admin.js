@@ -23,16 +23,17 @@ router.put('/product/:product_id/list',isAdmin, adminController.productList);
 router.put('/product/:product_id/unlist',isAdmin, adminController.productUnlist);
 
 // admin category mangement
-router.get('/category', adminController.adminCategory);
-router.post('/category', adminController.addCategory);
-router.put('/category/edit')
-router.delete('/category/:id', adminController.deleteCategory);
+router.get('/category',isAdmin, adminController.adminCategory);
+router.post('/category',isAdmin, adminController.addCategory);
+router.get('/category/:category_id/edit', isAdmin, adminController.editCategoryPage);
+router.put('/category/:category_id/edit', isAdmin, adminController.editCategory);
+router.delete('/category/:id',isAdmin, adminController.deleteCategory);
 
 //user management
 router.get('/users',isAdmin, adminController.adminUsers);
 router.get('/user/:user_id/view',isAdmin, adminController.adminUserdetails);
-router.put('/user/:user_id/block', adminController.adminUserBlock);
-router.put('/user/:user_id/unblock', adminController.adminUserUnblock);
+router.put('/user/:user_id/block',isAdmin, adminController.adminUserBlock);
+router.put('/user/:user_id/unblock',isAdmin, adminController.adminUserUnblock);
 
 //order management
 router.get('/orders', isAdmin, adminController.adminOrdersPage);
@@ -41,7 +42,10 @@ router.put('/order/:order_id/status', isAdmin, adminController.adminOrderStatus)
 router.put('/order/:order_id/return', isAdmin, adminController.returnOrder);
 
 //coupon management
-router.get('/coupons', adminController.couponsPage);
-router.get('/coupon/add', adminController.addCouponPage);
-router.post('/coupon/add', adminController.addCoupon);
+router.get('/coupons',isAdmin, adminController.couponsPage);
+router.get('/coupon/add',isAdmin, adminController.addCouponPage);
+router.post('/coupon/add',isAdmin, adminController.addCoupon);
+router.delete('/coupon/:id', isAdmin, adminController.deleteCoupon);
+
+
 module.exports = router;

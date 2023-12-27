@@ -89,7 +89,7 @@
                   </div>
                   <!-- <i class="me-1 fa fa-shopping-basket"></i> -->
                 <div class="d-flex justify-content-center mt-5">
-                  <button class="btn btn-secondary mx-1" type="button"><i class="fa-regular fa-heart"></i></button>
+                  <button onclick="addToWishlist('<%= product._id %>')" class="btn btn-secondary mx-1" type="button"><i class="fa-regular fa-heart"></i></button>
                   <% if(product.stock<=0) { %>
                     <button class="btn btn-danger mx-1 px-5 fw-bold" type="submit">Out of Stock</button>
                     <% } else { %>
@@ -158,5 +158,19 @@ let quantity = 1;
             quantityInput.value = quantity;
         });
 
-
+        async function addToWishlist(productId){
+            try {
+              let responce = await fetch(`/wishlist/${productId}/add`,{
+                method:'PUT',
+                headers:{
+                  'Content-Type': 'application/json',
+                }
+              });
+              if(responce.ok){
+                window.location.reload()
+              }
+            } catch (error) {
+              console.log(error);
+            }
+          }
     </script>

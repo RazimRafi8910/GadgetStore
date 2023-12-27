@@ -19,7 +19,12 @@ router.get('/',isUserBlocked, userController.userHomePage);
 //products
 router.get('/products',isUserBlocked, userController.userProductsPage);
 router.get('/product/:product_id/view',isUserBlocked, userController.productDetails);
-router.post('/product/:product_id/review',authenticateUser, userController.productReview);
+router.post('/product/:product_id/review', authenticateUser, userController.productReview);
+
+//whishlist
+router.get('/wishlist', isUserBlocked, authenticateUser, userController.wishlistPage);
+router.put('/wishlist/:product_id/add', authenticateUser, userController.addProductToWishlist);
+router.delete('/wishlist/:product_id/remove', authenticateUser, userController.wishlistRemoveItem);
 
 //user cart
 router.get('/cart',isUserBlocked, authenticateUser, userController.userCartPage);
@@ -31,7 +36,7 @@ router.post('/cart/:cart_id/coupon/add', authenticateUser, userController.coupon
 
 //order 
 router.get('/order/:order_id', authenticateUser, userController.orderPage);
-router.post('/order/:order_id/verfiy', authenticateUser, userController.orderPaymentVerify);
+router.post('/order/:order_id/verfiy', userController.orderPaymentVerify);
 router.post('/order/:cart_id/create', authenticateUser, userController.createOrder);
 router.put('/order/:order_id/cancel', authenticateUser, userController.cancelOrder);
 router.post('/order/:order_id/return', authenticateUser, userController.returnOrder);

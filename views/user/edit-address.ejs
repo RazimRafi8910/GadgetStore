@@ -18,8 +18,13 @@ input::-webkit-inner-spin-button {
             <form class="row mb-5 mt-2 g-3" action="/address/<%= address._id %>/edit" method="post">
                 <div class="col-md-6">
                   <div class="form-floating mb-3">
+                    <% if( message.housename ) { %>
+                      <input type="email" class="form-control is-invalid" id="floatingInputInvalid" placeholder="name@example.com" value="<%= address.houseName %>">
+                      <label for="floatingInputInvalid" class="text-danger"><%= message.housename %></label>
+                      <% } else { %>
                     <input type="text" value="<%= address.houseName %>" class="form-control" id="floatingInput" name="houseName">
                     <label for="floatingInput">House Name</label>
+                    <% } %>
                   </div>
                 </div>
                 <div class="col-md-6">

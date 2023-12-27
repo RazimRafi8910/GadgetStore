@@ -7,9 +7,11 @@ let instance = new Razorpay({ key_id: process.env.RAZORPAY_KEY_ID, key_secret: p
 async function razorPayOrderGenerate(orderId, amount) {
 
     let result
+    let price = Math.floor(amount);
+    price = price * 100;
 
     let option = {
-        amount: amount,
+        amount: price,
         currency: "INR",
         receipt: orderId,
     }

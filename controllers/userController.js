@@ -7,11 +7,12 @@ const productReview = require('../models/productReview');
 const Order = require('../models/order');
 const bcrypt = require("bcrypt");
 const Wallet = require("../models/wallet");
-const isValidInput = require('../config/inputValidation');
+const { isValidInput, addressValidation } = require('../config/inputValidation');
 const { GenerateOTP } = require("../config/OTPauth");
 const OrderReturn = require('../models/orderReturn');
 const Coupon = require('../models/coupon');
 const razorPayOrderGenerate = require('../config/razorPay');
+const Wishlist = require('../models/wishlist');
 
 module.exports = {
   
@@ -20,6 +21,7 @@ module.exports = {
       let user = req.user;
       let newProducts = await Product.find({ isListed: true }).limit(4).lean();
       let products = await Product.find({ isListed: true }).populate('category').lean();
+      // let userWishlist = await Wishlist.findOne({ user_id: user._id }).populate('items.product_id');
       
       res.render('shop/home', {
         tittle: 'GadgetStore | Home',
@@ -35,7 +37,8 @@ module.exports = {
 
   userProductsPage: async (req, res, next) => {
     try {
-      
+      let user = req.user;  
+      // let userWishlist = await Wishlist.findOne({ user_id: user._id }).populate('items.product_id');
       let productName = req.query.productName || "";
       let filterPrice = req.query.priceFilter || 1000000
       let filterCategory = req.query.category || 'All'
@@ -61,7 +64,7 @@ module.exports = {
       
       
       let categorys = await Category.find().lean();
-      let user = req.user;
+      
 
       res.render('shop/product-list', {
         tittle: 'GadgetStore | Products',
@@ -85,6 +88,7 @@ module.exports = {
       let productId = req.params.product_id;
       let product = await Product.findById(productId).populate('category');
       let productReviews = await productReview.findOne({ product_id: product._id });
+      // let userWishlist = await Wishlist.findOne({ user_id: user._id }).populate('items.product_id');
       let user = req.user;
 
       res.render('shop/product-details', {
@@ -320,6 +324,7 @@ module.exports = {
       res.render('user/edit-address.ejs', {
         tittle: 'GagetStore | Edit Address',
         user,
+        message:req.flash(),
         address
       })
     } catch (error) {
@@ -331,6 +336,14 @@ module.exports = {
     try {
       let addressId = req.params.address_id;
       let { houseName, town, address, city, state, pincode, addressType } = req.body;
+
+      let result = addressValidation(houseName, town, address, city, state, pincode);
+
+      if (!result.validation) {
+        req.flash(`${result.input}`, `Invalid ${result.input}`);
+        return res.redirect(`/address/${addressId}/edit`)
+      };
+
       let updateFields = {
         houseName,
         town,
@@ -399,6 +412,69 @@ module.exports = {
         coupon,
         discountPrice
       });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  wishlistPage: async (req, res, next) => {
+    try {
+      let user = req.user;
+      let userWishlist = await Wishlist.findOne({ user_id: user._id }).populate('items.product_id');
+      res.render('user/wishlist', {
+        tittle: 'GagetStore | Wishlist',
+        user,
+        userWishlist,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  addProductToWishlist: async (req, res, next) => {
+    try {
+      let user = req.user;
+      let productId = req.params.product_id;
+      let product = await Product.findOne({ _id: productId });
+      let userWishlist = await Wishlist.findOne({ user_id: user._id })
+      let items = [{
+        product_id: product._id
+      }];
+
+      let itemExist
+      if (userWishlist) {
+        userWishlist.items.forEach(item => {
+          if (item.product_id.toString() == productId) {
+            itemExist = true
+          }
+        });
+
+        if (itemExist) {
+          return res.status(200).json({ itemfound: true });
+        } else {
+          let result = await Wishlist.findOneAndUpdate({ _id: userWishlist._id }, { $push: { items } });
+        }
+      } else {
+        await Wishlist.create({
+          user_id: user._id,
+          items
+        });
+      };
+
+      res.status(200).json({ success: true });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  wishlistRemoveItem: async (req, res, next) => {
+    try {
+      let user = req.user;
+      let productId = req.params.product_id;
+      let product = await Wishlist.findOneAndUpdate({ user_id: user._id }, { $pull: { items: { product_id: productId } } });
+      if (product) {
+        res.status(200).json({ success: true });
+      }
     } catch (error) {
       next(error);
     }
@@ -646,12 +722,11 @@ module.exports = {
       discountPrice = (totalPrice / 100) * userCart.discount;
       totalPrice = totalPrice - discountPrice;
       //updating user coupon is used
-      await User.updateOne({ _id: user._id, "coupons.coupon_id": userCart.coupon }, { $set: { "coupons.$.isUsed": true } }, { new: true });
+      // await User.updateOne({ _id: user._id, "coupons.coupon_id": userCart.coupon }, { $set: { "coupons.$.isUsed": true } }, { new: true });
     };
 
     //checks the wallet balance and input amount
     if (walletAmount) {
-
       if (walletAmount > userWallet.balance || walletAmount > totalPrice){
         req.flash('error', 'The wallet balance exceeds the expected amount');
         return res.status(200).json({ success: false });
@@ -677,7 +752,7 @@ module.exports = {
 
     if (!order) {
       req.flash('error', 'order not created');
-      return res.status(200).json({ success: false });
+      return res.status(200).json({ success: false, payment: false});
     }
 
     if (walletAmount) {
@@ -692,45 +767,53 @@ module.exports = {
     } 
 
     //coupon
-    if (order.totalPrice > 10000) {
-      let coupon = await Coupon.findOne({ couponName: 'Buymore' });
-      let userCoupon = [{
-        coupon_id: coupon._id,
-        isUsed: false,
-        discount: coupon.discount
-      }];
+    // if (order.totalPrice > 10000) {
+      
+    //   let coupon = await Coupon.findOne({ couponName: 'Buymore' });
+    //   let userCoupon = [{
+    //     coupon_id: coupon._id,
+    //     isUsed: false,
+    //     discount: coupon.discount
+    //   }];
 
-      //check user coupons exist if not create
-      let userResult;
-      if (!user.coupon) {
-        userResult = await User.updateOne({ _id: user._id }, { $set: { coupons: userCoupon } });
-      } else {
+    //   let existCoupon;
+    //   user.coupons.forEach((userCoupon) => {
+    //     if (userCoupon.coupon_id.toString() == coupon._id) {
+    //       existCoupon = true;
+    //     }
+    //   });
 
-        let isCouponHave
-        user.coupons.forEach((coupon) => {
-          if (coupon.coupon_id == coupon._id) {
-            isCouponHave = true;
-          }
-        });
+    //   if (!existCoupon) {
 
-        if (!isCouponHave) {
-          userResult = await User.updateOne({ _id: user._id }, { $push: { coupons: userCoupon } });
-        }
+    //     //check user coupons exist if not create
+    //   let userResult;
+    //   if (!user.coupon) {
+    //     userResult = await User.updateOne({ _id: user._id }, { $set: { coupons: userCoupon } });
+    //   } else {
+
+    //     let isCouponHave
+    //     user.coupons.forEach((coupon) => {
+    //       if (coupon.coupon_id == coupon._id) {
+    //         isCouponHave = true;
+    //       }
+    //     });
+
+    //     if (!isCouponHave) {
+    //       userResult = await User.updateOne({ _id: user._id }, { $push: { coupons: userCoupon } });
+    //     }
         
-      };
-      req.flash('newCoupon', 'You got new %20 off Coupon');
-    };
+    //   };
+    // };
+    //   }
+      //razorpay online paymanet
+    if (totalPrice !== walletAmount && paymentMethod === 'onlinePayment') {  
+      let razorPayOrder = await razorPayOrderGenerate(order._id, totalPrice);
+      return res.status(200).json({ success: true, payment: true, orderId: order._id, razorPayOrder, user });
+    }
 
     await Cart.deleteOne({ _id: userCart._id });
-
-    if (totalPrice !== walletAmount && paymentMethod === 'onlinePayment') {
-      let razorPayOrder = await razorPayOrderGenerate(order._id, order.totalPrice);
-      return res.status(200).json({ success: true, payment: true, orderId: order._id, razorPayOrder,user });
-    }
-    
     req.flash('message', 'your order has been successfully created');
     res.status(200).json({ success: true, payment: false, orderId: order._id });
-    
   } catch (error) {
     next(error)
   }
@@ -738,10 +821,12 @@ module.exports = {
 
   orderPaymentVerify: async (req, res, next) => {
     try {
+      let user = req.user;
       let orderId = req.params.order_id;
       let { razorpay_payment_id } = req.body;
       if (razorpay_payment_id) {
         req.flash('message', 'Payment success');
+        await Cart.deleteOne({ user_id: user._id });
       }
       res.redirect(`/order/${orderId}`);
     } catch (error) {
@@ -799,7 +884,8 @@ module.exports = {
         await Product.updateOne({ _id: item.product }, { $set: { stock: currentStock } });
       })
 
-      if (order.paymentMethod === 'onlinePayment') {
+      // refund for online payment
+      if (order.paymentMethod === 'onlinePayment' || order.paymentMethod === 'PaidOnWallet') {
         let userWallet = await Wallet.findOne({ user_id: order.user_id });
         let transactions = [{
           order_id: order._id,
@@ -821,6 +907,7 @@ module.exports = {
             $set: { balance: balance }
           });
         }
+        req.flash('message', 'Refund added to Wallet');
       }
 
       res.redirect('/')

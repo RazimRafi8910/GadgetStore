@@ -1,0 +1,76 @@
+<%- include('../partials/header.ejs') %>
+<%- include('../partials/admin-navebar.ejs')%>
+
+
+<div class="px-4 col-xl-10 col-lg-9 col-md-9 col-10">
+    <h2 class="mt-4 fw-bold subheading px-5">Edit Category</h2>
+    <hr size="4">
+
+    <% if( message.message ) { %>
+      <div class="alert alert-success" role="alert">
+          <%= message.message %>
+        </div>
+        <% } %>
+        <% if( message.error ) { %>
+          <div class="alert alert-danger" role="alert">
+              <%= message.error %>
+            </div>
+            <% } %>
+
+            <div class="row m-4">
+                <form id="editForm" action="/" method="post">
+                    <div class="col-lg-6">
+                        <div class="mb-3">
+                            <label for="exampleFormControlInput1" class="form-label fw-bold">Category Name</label>
+                            <input type="text" class="form-control" name="categoryName" value="<%= category.categoryName %>" aria-label="categoryName" >
+                          </div>
+                    </div>
+                    <div class="col-lg-6"></div>
+                    <div class="col-lg-6 d-flex justify-content-end">
+                        <button class="btn btn-primary me-4 px-4" onclick="getCategoryId('<%= category._id %>')" type="submit">Edit</button>
+                    </div>               
+                </form>
+            </div>
+
+
+
+
+ </div>
+</div>
+</div>
+</div>
+
+<script>
+
+    let form = document.getElementById('editForm');
+
+    let categoryId;
+
+    function getCategoryId(id){
+        categoryId = id
+    }
+
+    form.addEventListener('submit',async()=>{
+        event.preventDefault();
+
+        let data = new FormData(form);
+        let value = Object.fromEntries(data.entries());
+        let jsonValue = JSON.stringify(value);
+
+        try {
+            let responce = await fetch(`/admin/category/${categoryId}/edit`,{
+                method:'PUT',
+                headers:{
+                    'Content-Type': 'application/json',
+                },
+                body:jsonValue
+            });
+            if(responce.ok){
+                window.location.href='/admin/category';
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    })
+
+</script>

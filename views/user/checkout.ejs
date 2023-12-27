@@ -14,7 +14,7 @@
               <!-- Checkout -->
               <div class="card shadow-0 border">
                 <div class="p-4">
-                  <form id="checkoutForm" action="/order/<%= userCart._id %>/create" method="post">
+                  <form id="checkoutForm" method="post">
                   <h5 class="card-title mb-2">Address</h5>
                   <hr class="my-2" />
                   <div class="row mb-3">
@@ -79,6 +79,7 @@
                   </div>
                   <p id="indicator" class="text-success ms-2"></p>
                   <% } else { %>
+                    <p class="text-muted mb-2 d-none">Balance : <span class="text-dark">&#8377</span><span class="text-dark" id="walletBalance"> 0</span></p>
                     <h5>No Wallet found</h5>
                     <% }%>
                   </div>
@@ -148,8 +149,10 @@
       let indicator = document.getElementById('indicator');
       let currentBalance = Number(walletBalance.innerHTML)
       
+      if(inputAmount){
+        inputAmount.addEventListener('change',changeInput); 
+      }
       
-      inputAmount.addEventListener('change',changeInput);
 
       function changeInput(){
         let inputValue = Number(inputAmount.value);
@@ -167,56 +170,53 @@
       let cart_Id = document.getElementById('cartId');
       let cartId = cart_Id.value;
 
-      let form = document.getElementById('checkoutForm')
-      form.addEventListener('submit',orderCreate);
+        let form = document.getElementById('checkoutForm')
+        form.addEventListener('submit',orderCreate)
 
-      async function orderCreate(){
+      async function orderCreate(){      
         event.preventDefault();
+          let data = new FormData(form);
+          let value = Object.fromEntries(data.entries());
+          let jsonValue = JSON.stringify(value);
 
-        let data = new FormData(form);
-        let value = Object.fromEntries(data.entries());
-        let jsonValue = JSON.stringify(value);
+      try {
+        let responce = await fetch(`/order/${cartId}/create`,{
+              method:"POST",
+              body:jsonValue,
+              headers:{
+                  'Content-Type': 'application/json'
+              }
+            });
+            console.log(responce)
+            if(responce.ok){
 
-        try {
-          let responce = await fetch(`/order/${cartId}/create`,{
-            method:"POST",
-            body:jsonValue,
-            headers:{
-                'Content-Type': 'application/json'
-            }
-          });
-
-          if(responce.ok){
-
-            let responceData = await responce.json();
-
-            if(responceData.success){
-              if(responceData.payment){
-                console.log(responceData.razorPayOrder)
-                console.log(responceData.user);
-                let orderId = responceData.orderId
-                razorpayPayment(responceData.razorPayOrder,responceData.user,orderId);
-                // window.location.href = `/order/${responceData.orderId}`
-              }else {
-                window.location.href = `/order/${responceData.orderId}`
+              responceData = await responce.json();
+              
+              if(responceData.success){
+                if(responceData.payment){
+                  let orderId = responceData.orderId
+                  razorpayPayment(responceData.razorPayOrder,responceData.user,orderId);
+                }else {
+                  window.location.href = `/order/${responceData.orderId}`
+                }
               }
             }
-          }
-        } catch (error) {
-          console.log(error);
-        }
+      } catch (error) {
+        console.log(error);
+      } 
       }
-
+      let responceData
+      console.log(responceData);
 
     function razorpayPayment (razorPayOrder,user,orderId){
       var options = {
     "key": "rzp_test_7utK5Bw7ikRVRU", // Enter the Key ID generated from the Dashboard
-    "amount": razorPayOrder.amount * 100, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    "amount": razorPayOrder.amount, // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
     "currency": "INR",
     "name": "GadgetStore", //your business name
     "description": "Test Transaction",
     "order_id": razorPayOrder.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
-    "callback_url":`/order/${orderId}/verfiy`,
+    "callback_url":`/order/${orderId}/verfiy`, 
     "prefill": { //We recommend using the prefill parameter to auto-fill customer's contact information especially their phone number
         "name": user.username, //your customer's name
         "email": user.email,
@@ -229,10 +229,9 @@
           "color": "#3399cc"
       }
     };
-    console.log('werf')
+
     let rzp1 = new Razorpay(options);
     rzp1.open();
-
-    }
+  }
 
     </script>

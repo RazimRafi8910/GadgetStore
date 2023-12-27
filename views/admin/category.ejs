@@ -56,9 +56,13 @@
                   </form>
                 </td> -->
                 <td>
+                  <a class="btn btn-outline-dark border-dark px-3 py-1" href="/admin/category/<%= eachCategory._id %>/edit">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                </a>
                   <button type="button" class="btn btn-danger border-dark px-3 py-1" data-bs-toggle="modal" data-bs-target="#deleteCategory" 
                   onclick="setCategoryId('<%= eachCategory._id %>')">Delete
                 </button>
+                
                 </td>
               </tr>
               <% serialNumber++; %>
@@ -86,9 +90,6 @@
       </div>
     </div>
   </div>
-
-    
-
   
 
 
