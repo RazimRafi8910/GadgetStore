@@ -31,12 +31,24 @@ input::-webkit-inner-spin-button {
         <div class="col-xl-5 col-lg-4 col-md-4 col-10">
 
             <!--product name-->
+            <% if( message.productName ) { %>
+                <label for="Product Name" class="form-label fs-4 fw-bold mt-3 second-heading">Product Name</label>
+                <p class="text-danger m-0"><%= message.productName %></p>
+                <input type="text" class="form-control is-invalid py-2" id="Product Name" value="<%= product.productName %>" name="productName" required>
+            <% } else { %> 
             <label for="Product Name" class="form-label fs-4 fw-bold mt-3 second-heading">Product Name</label>
             <input type="text" class="form-control py-2" id="Product Name" name="productName" value="<%= product.productName %>" required>
+                <%}%>
 
             <!--price-->
+            <% if( message.price ) { %>
+                <label for="Price" class="form-label fs-4 fw-bold mt-3 second-heading">Price</label>
+                <p class="text-danger m-0"><%= message.price %></p>
+                <input type="number" class="form-control is-invalid py-2" value="<%= product.price %>" id="Price" name="price" required>
+            <% } else { %>
             <label for="Price" class="form-label fs-4 fw-bold mt-3 second-heading">Price</label>
             <input type="number" class="form-control py-2" id="Price" name="price" value="<%= product.price %>" required>
+            <% } %>
 
             <!--category-->
             <label for="categorySelect" class="form-label fs-4 fw-bold mt-3 second-heading">Category</label>
@@ -55,11 +67,24 @@ input::-webkit-inner-spin-button {
               </div>
             
             <!--brand-->
+            <% if( message.brand ) { %>
+                <label for="brand" class="form-label fs-4 fw-bold mt-3 second-heading">Brand</label>
+                <p class="text-danger m-0"><%= message.brand %></p>
+                <input type="text" class="form-control is-invalid py-2" id="brand" value="<%= product.brand %>" name="brand" required>
+            <% } else { %> 
             <label for="brand" class="form-label fs-4 fw-bold mt-3 second-heading">Brand</label>
             <input type="text" class="form-control py-2" id="brand" name="brand" value="<%= product.brand %>" required>
+                <%}%>
+
             <!--description-->
+            <% if( message.description ) { %>
+                <label for="description" class="form-label fs-4 fw-bold mt-3 second-heading">Description</label>
+                <p class="text-danger m-0"><%= message.description %></p>
+                <input class="form-control" id="description" rows="4" value="<%= product.description %>" name="description">
+            <% } else { %>
                 <label for="description" class="form-label fs-4 fw-bold mt-3 second-heading">Description</label>
                 <input class="form-control" id="description" rows="4" name="description" value="<%= product.description %>" required>
+                <%}%>
         </div>
 
         <div class="col-xl-5 col-lg-4 col-md-4 col-10">
@@ -77,8 +102,14 @@ input::-webkit-inner-spin-button {
             
 
             <!--stock-->
+            <% if( message.stock ) { %>
+                <label for="stock" class="form-label fs-4 fw-bold mt-3 second-heading">Stock</label>
+                <p class="text-danger m-0"><%= message.stock %></p>
+                <input type="number" class="form-control py-2" id="stock" value="<%= product.stock%>" name="stock" required>
+            <% } else { %>
             <label for="stock" class="form-label fs-4 fw-bold mt-3 second-heading">Stock</label>
             <input type="number" class="form-control py-2" id="stock" name="stock" value="<%= product.stock%>" required>
+            <%}%>
         
             <!--specification-->
             <div class="d-flex justify-content-between">

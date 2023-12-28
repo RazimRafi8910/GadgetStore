@@ -3,7 +3,7 @@ const Category = require("../models/category");
 const User = require("../models/user");
 const fs = require("fs");
 const Order = require("../models/order");
-const isValidInput = require("../config/inputValidation");
+const { productInputValidation } = require("../config/inputValidation");
 const OrderReturn = require("../models/orderReturn");
 const Wallet = require("../models/wallet");
 const Coupon = require("../models/coupon");
@@ -154,16 +154,12 @@ module.exports = {
     try {
         let { productName, price, brand, category, specification, description, stock } = req.body;
       
-      //input validation 
-      let validationResult = isValidInput([productName, brand]);
-      if (description.trim() === "" ) {
-        console.log(description);
-        validationResult = false;
-    }
-      if (!validationResult || price <= 0 || stock < 0) {
-        req.flash('error', 'Invalid Inputs');
+      //input validation
+      let result = productInputValidation(productName, price, brand, description, stock);
+      if (!result.validation) {
+        req.flash(`${result.input}`, `Invalid ${result.input}`);
         return res.redirect('/admin/product/add');
-      }
+      };
       
       //product images
       let images = req.files;
@@ -282,11 +278,12 @@ module.exports = {
         specification,
       } = req.body;
 
-      let validationResult = isValidInput([productName, brand]);
-      if (!validationResult || price <= 0 || stock < 0) {
-        req.flash('error', 'Invalid Inputs');
+      //input validation
+      let result = productInputValidation(productName, price, brand, description, stock);
+      if (!result.validation) {
+        req.flash(`${result.input}`, `Invalid ${result.input}`);
         return res.redirect(`/admin/product/${productId}/edit`);
-      }
+      };
 
       //product images
       let newImages = req.files;

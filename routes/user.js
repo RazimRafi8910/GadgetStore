@@ -52,9 +52,9 @@ router.get('/wallet', authenticateUser, userController.userWalletPage);
 //user address
 router.get('/address/:user_id/add',isUserBlocked, authenticateUser,userController.addAddressPage);
 router.get('/address/:address_id/edit',isUserBlocked, authenticateUser,userController.editAddressPage);
+router.post('/address/:user_id/add', authenticateUser,userController.addAddress);
 router.post('/address/:address_id/edit', authenticateUser, userController.editAddress);
 router.delete('/address/:address_id/delete', authenticateUser, userController.deleteAddress);
-router.post('/address/:user_id/add', authenticateUser,userController.addAddress);
 
 module.exports = router;
 

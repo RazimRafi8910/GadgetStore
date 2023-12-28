@@ -57,7 +57,7 @@ function addressValidation(houseName,town,address,city,state,pincode) {
         return result
     };
 
-    if (!pincode.length === 0) {
+    if (!pincode.length === 6) {
         result.validation = false;
         result.input = 'pincode';
         return result
@@ -65,11 +65,51 @@ function addressValidation(houseName,town,address,city,state,pincode) {
 
     if (address.trim() == '' ) {
         result.validation = false;
-        result.input = 'pincode';
+        result.input = 'address';
         return result
     }
 
     return result;
 }
 
-module.exports = { isValidInput, addressValidation };
+
+function productInputValidation(productName, price, brand, description, stock) {
+    
+    let result = {
+        validation: true
+    };
+
+    if (productName.trim() == '' || !namePattern.test(productName)) {
+        result.validation = false;
+        result.input = 'productName';
+        return result;
+    };
+
+    if (brand.trim() == '' || !namePattern.test(brand)) {
+        result.validation = false;
+        result.input = 'brand';
+        return result;
+    };
+
+    if (description.trim() == '') {
+        result.validation = false;
+        result.input = 'brand';
+        return result;
+    };
+
+    if (stock < 0) {
+        result.validation = false;
+        result.input = 'stock';
+        return result;
+    }
+
+    if (price < 1) {
+        result.validation = false;
+        result.input = 'price';
+        return result;
+    }
+
+    return result;
+}
+
+module.exports = { isValidInput, addressValidation, productInputValidation };

@@ -29,36 +29,66 @@ input::-webkit-inner-spin-button {
             <form class="row mb-5 mt-2 g-3" action="/address/<%= user._id %>/add" method="post">
                 <div class="col-md-6">
                   <div class="form-floating mb-3">
+                    <% if( message.housename ) { %>
+                      <input type="text" class="form-control is-invalid" id="floatingInputInvalid">
+                      <label for="floatingInputInvalid" class="text-danger"><%= message.housename %></label>
+                      <% } else { %>
                     <input type="text" class="form-control" id="floatingInput" name="houseName">
-                    <label for="floatingInput">House name</label>
+                    <label for="floatingInput">House Name</label>
+                    <% } %>
                   </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="floatingInput" name="town">
+                      <% if( message.town ) { %>
+                        <input type="text" class="form-control is-invalid" id="floatingInputInvalid">
+                        <label for="floatingInputInvalid" class="text-danger"><%= message.town %></label>
+                        <% } else { %>
+                        <input type="text"  class="form-control" id="floatingInput" name="town">
                         <label for="floatingInput">Town</label>
+                        <% } %>
                       </div>
                 </div>
-                <div class="form-floating">
-                    <textarea class="form-control" name="address" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
-                    <label for="floatingTextarea2" class="text-muted">Address (street and area)</label>
-                  </div>
+                  <div class="form-floating">
+                    <% if( message.address ) { %>
+                      <input type="text" class="form-control is-invalid" id="floatingInputInvalid"  style="height: 100px">
+                      <label for="floatingInputInvalid" class="text-danger"><%= message.address %></label>
+                      <% } else { %>
+                        <textarea class="form-control" name="address" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
+                        <label for="floatingTextarea2" class="text-muted">Address (street and area)</label>
+                      <% } %> 
+                    </div>
                 <div class="col-md-6">
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="floatingInput" name="city">
+                      <% if( message.city ) { %>
+                        <input type="text" class="form-control is-invalid" id="floatingInputInvalid">
+                        <label for="floatingInputInvalid" class="text-danger"><%= message.city %></label>
+                        <% } else { %>
+                        <input type="text"  class="form-control" id="floatingInput" name="city">
                         <label for="floatingInput">City</label>
+                        <% } %>
                       </div>
                 </div>
                 <div class="col-md-4">
                     <div class="form-floating mb-3">
+                      <% if( message.state ) { %>
+                        <input type="text" class="form-control is-invalid" id="floatingInputInvalid">
+                        <label for="floatingInputInvalid" class="text-danger"><%= message.state %></label>
+                        <% } else { %>
                         <input type="text" class="form-control" id="floatingInput" name="state">
                         <label for="floatingInput">State</label>
+                        <% } %>
                       </div>
                 </div>
                 <div class="col-md-2">
                     <div class="form-floating mb-3">
+                      <% if( message.pincode ) { %>
+                        <input type="number" class="form-control is-invalid" id="floatingInputInvalid">
+                        <label for="floatingInputInvalid" class="text-danger"><%= message.pincode %></label>
+                        <% } else { %>
                         <input type="number" class="form-control" id="floatingInput" name="pincode">
                         <label for="floatingInput">Pincode</label>
+                        <% } %>
                       </div>
                 </div>
                 <div class="col-12 d-flex">

@@ -279,16 +279,10 @@ module.exports = {
       let userId = req.params.user_id;
       let { houseName, town, address, city, state, pincode, addressType } = req.body;
 
-      //validate the inputs
-      let validationResult = isValidInput([houseName, town, city, state, addressType]);
+      let result = addressValidation(houseName, town, address, city, state, pincode);
 
-      if (pincode.length !== 6) {
-         req.flash('error', 'Invalid pincode');
-        return res.redirect(`/address/${userId}/add`);
-      }
-
-      if (!validationResult) {
-        req.flash('error', 'Invalid Inputs');
+      if (!result.validation) {
+        req.flash(`${result.input}`, `Invalid ${result.input}`);
         return res.redirect(`/address/${userId}/add`);
       }
 
