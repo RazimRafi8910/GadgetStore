@@ -3,6 +3,16 @@
 
     <div class="container">
         <div class="row my-5 p-2 border border-2" style="background-color: rgb(255, 255, 255);">
+          <% if( message.message ) { %>
+            <div class="alert alert-success" role="alert">
+                <%= message.message %>
+              </div>
+              <% } %>
+              <% if( message.error ) { %>
+                <div class="alert alert-danger" role="alert">
+                    <%= message.error %>
+                  </div>
+                  <% } %>
             <div class="col-xl-6 col-lg-6 col-md-6 col-12">
                 <div class="d-flex justify-content-center border my-4 p-3">
                     <div id="carouselExampleControls" class="carousel slide  d-flex justify-content-between" data-bs-ride="carousel">

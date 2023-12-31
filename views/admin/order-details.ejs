@@ -85,9 +85,24 @@
                                     <h5 class="mt-1 ">Status :</h5><p class=" my-0 fs-5 text-success fw-bold"><%= order.orderStatus %></p>
                                 </div>
                                 <% } %>
+                  
+                  <% if(order.orderStatus === 'Delivered') {%>
+                        <div class="d-flex ">
+                            <h5 class="mt-1 ">Deleverd Date : </h5><p class="my-0 fs-5"> <%= order.deleveredDate.toLocaleString('default',{day: 'numeric', month: 'numeric', year: 'numeric'})  %></p>
+                         </div>
+                  <%}%>
+                
                 <div class="d-flex ">
                     <h5 class="mt-1 ">Phone : </h5><p class=" my-0 fs-5 "> <%= order.user_id.number %></p>
                 </div>
+                <% if(recipt) {%>
+                  <div class="d-flex ">
+                    <h5 class="mt-1 ">Payment Id : </h5><p class="my-0 fs-5"> <%= recipt.razorpay_payment_id  %></p>
+                </div>
+                <div class="d-flex ">
+                  <h5 class="mt-1 ">Payment Order Id : </h5><p class="my-0 fs-5"> <%= recipt.razorpay_order_id  %></p>
+              </div>
+                <%}%>
                 <div class="d-flex">
                     <h5 class="mt-1">Address :</h5>
                     <div>

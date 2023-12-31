@@ -13,6 +13,7 @@ const OrderReturn = require('../models/orderReturn');
 const Coupon = require('../models/coupon');
 const razorPayOrderGenerate = require('../config/razorPay');
 const Wishlist = require('../models/wishlist');
+const PaymentRecipt = require('../models/paymentRecipt');
 
 module.exports = {
   
@@ -88,14 +89,14 @@ module.exports = {
       let productId = req.params.product_id;
       let product = await Product.findById(productId).populate('category');
       let productReviews = await productReview.findOne({ product_id: product._id });
-      // let userWishlist = await Wishlist.findOne({ user_id: user._id }).populate('items.product_id');
       let user = req.user;
 
       res.render('shop/product-details', {
         tittle: 'GadgetStore | Product Details',
         product,
         productReviews,
-        user
+        user,
+        message:req.flash()
       });
     } catch (error) {
       next(error);
@@ -139,13 +140,27 @@ module.exports = {
   userProfile: async (req, res, next) => {
     try {
       let user = req.user;
-      let userDetails = await User.findOne({ _id: user._id }).populate('coupons.coupon_id');
+      let userDetails = await User.findOne({ _id: user._id })
       let userAddress = await Address.find({ user_id: user._id });
-      let userOrders = await Order.find({ user_id: user._id }).sort({ orderDate: -1 });
       let userWallet = await Wallet.findOne({ user_id: user._id });
+      let coupons = await Coupon.find().lean();
+      let userOrders
+      let filterStatus = req.query.orderStatus || 'All';
+      let page = req.query.page || 1;
+      let limit = 6;
+      let skip = (page - 1) * limit;
+      let endIndex = page * limit;
+      
+      if (filterStatus !== 'All') {
+        userOrders = await Order.find({ $and: [{ user_id: user._id }, { orderStatus: filterStatus }] }).sort({ orderDate: -1 }).skip(skip).limit(endIndex);
+      } else {
+        userOrders = await Order.find({ user_id: user._id }).skip(skip).limit(endIndex).sort({ orderDate: -1 });
+      }
+
       res.render('user/profile', {
         tittle: 'GadgetStore | Profile',
         user,
+        coupons,
         userAddress,
         userOrders,
         userWallet,
@@ -392,6 +407,7 @@ module.exports = {
 
         if (userCart.discount > 0) {
           discountPrice = (totalPrice / 100) * userCart.discount;
+          discountPrice = discountPrice.toFixed(2);
           totalPrice = totalPrice - discountPrice;
         }
       };
@@ -490,7 +506,7 @@ module.exports = {
       //checking the stock of the product
       if (product.stock <= 0 || productQuantity > product.stock) {
         req.flash('error', 'out of stock')
-        return res.redirect('/');
+        return res.redirect(`/product/${productId}/view`);
       }
       let userCart = await Cart.findOne({ user_id: user._id }).populate('items.product');
 
@@ -501,7 +517,7 @@ module.exports = {
           items
         });
         req.flash('message', 'product added to Cart');
-        return res.redirect('/cart');
+        returnres.redirect(`/product/${productId}/view`);
       }
 
       
@@ -519,8 +535,8 @@ module.exports = {
         let quantity = productQuantity + existItem.quantity;  
         await Cart.updateOne({ _id: userCart._id, "items.product": productId }, { $set: { "items.$.quantity":quantity } });
       }
-
-      res.redirect('/');
+      req.flash('message', 'product added to Cart');
+      res.redirect(`/product/${productId}/view`);
 
     } catch (error) {
       next(error);
@@ -596,8 +612,9 @@ module.exports = {
       let cartId = req.params.cart_id;
       let user = req.user;
       let { couponCode } = req.body;
-      let userDetails = await User.findOne({ _id: user._id });
+      let cart = await Cart.findOne({ _id: cartId }).populate('items.product');
       let coupon = await Coupon.findOne({ code: couponCode });
+      let totalPrice = 0;
 
       if (!coupon) {
         req.flash('couponError', 'No Coupon found');
@@ -605,26 +622,40 @@ module.exports = {
       }
       
       //check user alreay used coupon
-      let couponUsed 
-      userDetails.coupons.forEach((userCoupon) => { 
-        if (userCoupon.coupon_id.toString()==coupon._id) {
-          couponUsed = userCoupon.isUsed
+      if (user.usedCoupons) {
+        let couponUsed 
+        user.usedCoupons.forEach((userCoupon) => { 
+          if (userCoupon==coupon.code) {
+          couponUsed = true
         }
       });
 
       if (couponUsed) {
         req.flash('couponError', 'Coupon Code already used');
         return res.redirect('/cart');
-      }
+        };
+      };
       
-      //add coupon to cart 
-      let updateFields = {
-        coupon: coupon._id,
-        discount:coupon.discount
-      }
-      let result = await Cart.findOneAndUpdate({ _id: cartId }, updateFields, { new: true });
-      req.flash('coupon', 'Coupon Added');
-      res.redirect('/cart');
+      
+      //total price of the cart
+      if (cart) {
+        cart.items.forEach(item => {
+          totalPrice += item.product.price * item.quantity;
+        });
+      };
+
+      if (coupon.limit > totalPrice) {
+        req.flash('couponError', `The minimum amount must be above Rs${coupon.limit} for this coupon`);
+        return res.redirect('/cart');
+      };
+        //add coupon to cart 
+        let updateFields = {
+          coupon: coupon._id,
+          discount: coupon.discount
+        }
+        let result = await Cart.findOneAndUpdate({ _id: cartId }, updateFields, { new: true });
+        req.flash('coupon', 'Coupon Added');
+        res.redirect('/cart');
 
     } catch (error) {
       next(error)
@@ -635,16 +666,25 @@ module.exports = {
     try {
       let cartId = req.params.cart_id;
       let user = req.user;
-      let userCart = await Cart.findOne({ _id: cartId }).populate('items.product');
+      let userCart = await Cart.findOne({ _id: cartId }).populate('items.product').populate('coupon');
       let userAddress = await Address.find({ user_id: user._id });
       let userWallet = await Wallet.findOne({ user_id: user._id });
       let totalPrice = 0;
       let quantityCheck = false;
+      let leftStock = false;  //for to check the stock of the product
+
+      if (!userCart) {
+        return res.redirect('/cart');
+      };
 
       //calculating total price of the product
       userCart.items.forEach(item => {
+        //for cheking the quantity
         if (item.quantity < 1) {
-          quantityCheck = true;
+          quantityCheck = true;  
+        }
+        if (item.product.stock < 0) {
+          leftStock = true;
         }
         totalPrice += item.product.price * item.quantity;
       });
@@ -652,8 +692,20 @@ module.exports = {
       //coupon discount to total price
       let discountPrice = 0;
       if (userCart.discount > 0) {
+
+        if (userCart.coupon.limit > totalPrice) {
+          await Cart.updateOne({ _id: cartId }, { $set: { discount: 0 }, $unset: { coupon: userCart.coupon } });
+          req.flash('couponError', `The minimum amount must be above Rs${userCart.coupon.limit} for this coupon`);
+          return res.redirect('/cart');
+        }
         discountPrice = (totalPrice / 100) * userCart.discount;
+        discountPrice = discountPrice.toFixed(2);
         totalPrice = totalPrice - discountPrice;
+      }
+
+      if (leftStock) {
+        req.flash('error', 'Product OUT OF STOCK');
+        return res.redirect('/cart');
       }
 
       if (quantityCheck) {
@@ -680,11 +732,16 @@ module.exports = {
     try {
       let user = req.user;
       let orderId = req.params.order_id;
+      let recipt 
       let userOrder = await Order.findOne({ _id: orderId }).populate('items.product').populate('orderAddress');
+      if (userOrder.paymentMethod === 'onlinePayment') {
+        recipt = await PaymentRecipt.findOne({ order_id: userOrder._id });
+      };
       res.render('user/order', {
         tittle: 'GadgetStore | Order',
         user,
         userOrder,
+        recipt,
         message:req.flash(),
       })
     } catch (error) {
@@ -699,6 +756,7 @@ module.exports = {
     let { addressId, paymentMethod, walletAmount } = req.body;
     let userCart = await Cart.findOne({ _id: userCartId }).populate('items.product');
     let userWallet = await Wallet.findOne({ user_id: user._id });
+    let coupon = await Coupon.findOne({ _id: userCart.coupon });
     let orderItems = userCart.items;
     let orderStatus = 'Processing';
     let totalPrice = 0
@@ -715,10 +773,15 @@ module.exports = {
     if (userCart.discount > 0) {
       discountPrice = (totalPrice / 100) * userCart.discount;
       totalPrice = totalPrice - discountPrice;
-      //updating user coupon is used
-      // await User.updateOne({ _id: user._id, "coupons.coupon_id": userCart.coupon }, { $set: { "coupons.$.isUsed": true } }, { new: true });
-    };
 
+      //updating user coupon is used
+      let userCoupon = coupon.code;
+      if (user.usedCoupons) {
+        await User.updateOne({ _id: user._id }, { $push: { usedCoupons: userCoupon } });
+      } else {
+        await User.updateOne({ _id: user._id }, { $set: { usedCoupons: userCoupon } });
+      }
+    };
     //checks the wallet balance and input amount
     if (walletAmount) {
       if (walletAmount > userWallet.balance || walletAmount > totalPrice){
@@ -760,45 +823,7 @@ module.exports = {
     await Wallet.updateOne({ _id: userWallet._id }, { $set: { balance: remainingBalance }, $push: { transactions } }, { new: true });
     } 
 
-    //coupon
-    // if (order.totalPrice > 10000) {
-      
-    //   let coupon = await Coupon.findOne({ couponName: 'Buymore' });
-    //   let userCoupon = [{
-    //     coupon_id: coupon._id,
-    //     isUsed: false,
-    //     discount: coupon.discount
-    //   }];
 
-    //   let existCoupon;
-    //   user.coupons.forEach((userCoupon) => {
-    //     if (userCoupon.coupon_id.toString() == coupon._id) {
-    //       existCoupon = true;
-    //     }
-    //   });
-
-    //   if (!existCoupon) {
-
-    //     //check user coupons exist if not create
-    //   let userResult;
-    //   if (!user.coupon) {
-    //     userResult = await User.updateOne({ _id: user._id }, { $set: { coupons: userCoupon } });
-    //   } else {
-
-    //     let isCouponHave
-    //     user.coupons.forEach((coupon) => {
-    //       if (coupon.coupon_id == coupon._id) {
-    //         isCouponHave = true;
-    //       }
-    //     });
-
-    //     if (!isCouponHave) {
-    //       userResult = await User.updateOne({ _id: user._id }, { $push: { coupons: userCoupon } });
-    //     }
-        
-    //   };
-    // };
-    //   }
       //razorpay online paymanet
     if (totalPrice !== walletAmount && paymentMethod === 'onlinePayment') {  
       let razorPayOrder = await razorPayOrderGenerate(order._id, totalPrice);
@@ -817,8 +842,15 @@ module.exports = {
     try {
       let user = req.user;
       let orderId = req.params.order_id;
-      let { razorpay_payment_id } = req.body;
+      let { razorpay_payment_id, razorpay_order_id, razorpay_signature } = req.body;
+
       if (razorpay_payment_id) {
+        await PaymentRecipt.create({
+          order_id: orderId,
+          razorpay_order_id,
+          razorpay_payment_id,
+          razorpay_signature
+        });
         req.flash('message', 'Payment success');
         await Cart.deleteOne({ user_id: user._id });
       }
@@ -836,7 +868,7 @@ module.exports = {
 
       let userOrder = Order.findOne({ _id: orderId });
 
-      let orderDate = userOrder.orderDate;
+      let orderDate = userOrder.deleveredDate;
       let currentDate = Date.now();
       let daysAgo = Math.floor((currentDate - orderDate) / (1000 * 60 * 60 * 24)); // Calculate days difference
 

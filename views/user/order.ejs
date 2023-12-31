@@ -101,6 +101,17 @@
                             <h5 class="mt-1 ">Status :</h5><p class=" my-0 fs-5 fw-bold text-success"><%= userOrder.orderStatus %></p>
                             <% } %>
                 </div>
+
+                <% if(recipt) {%>
+                  <div class="d-flex ">
+                    <h5 class="mt-1 ">Payment Id : </h5><p class="my-0 fs-5"> <%= recipt.razorpay_payment_id  %></p>
+                </div>
+                <%}%>
+                <% if(userOrder.orderStatus === 'Delivered') {%>
+                  <div class="d-flex ">
+                    <h5 class="mt-1 ">Deleverd Date : </h5><p class="my-0 fs-5"> <%= userOrder.deleveredDate.toLocaleString('default',{day: 'numeric', month: 'numeric', year: 'numeric'})  %></p>
+                </div>
+                <%}%>
                 <div class="d-flex">
                     <h5 class="mt-1">Address :</h5>
                     <div>
@@ -109,6 +120,7 @@
                         <p class="fs-6 ms-3 text-"><%= userOrder.orderAddress.pincode %></p>
                     </div> 
                 </div>
+                
                 
             </div>
         </div>

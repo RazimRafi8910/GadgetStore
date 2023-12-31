@@ -13,6 +13,10 @@ let couponShcema = mongoose.Schema({
         type: Number,
         required: true
     },
+    limit: {
+        type: Number,
+        required: true
+    },
     expriyDate: {
         type: Date,
         required: true
@@ -24,7 +28,7 @@ let couponShcema = mongoose.Schema({
     createdAt: {
         type: Date,
         required: true,
-        default:Date.now
+        default: Date.now
     }
 });
 

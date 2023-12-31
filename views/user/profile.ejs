@@ -97,8 +97,26 @@
                 
             </div>
 
+            <!-- orders -->
             <div class="row m-4">
+              <div class="d-flex justify-content-between mb-2">
                 <h2 class="mb-0">Orders</h2>
+                <div class="col-lg-2 d-flex justify-content-end">
+                  <div class="dropdown">
+                    <button class="btn btn-ligth dropdown-toggle border border-secondary px-4 " type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                      Filter
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                      <li><a class="dropdown-item" href="/profile">All</a></li>
+                      <li><a class="dropdown-item" href="/profile?orderStatus=Delivered">Delivered</a></li>
+                      <li><a class="dropdown-item" href="/profile?orderStatus=Shipping">Shipping</a></li>
+                      <li><a class="dropdown-item" href="/profile?orderStatus=Confrimed">Confrimed</a></li>
+                      <li><a class="dropdown-item" href="/profile?orderStatus=Cancelled">Cancelled</a></li>                     
+                    </ul>
+                  </div>
+                </div>                 
+              </div>
+                
                 <hr class="mt-0">
               </div>
               <div class="row mx-4">
@@ -176,31 +194,57 @@
                   </div>
             <% }) } %>
             
+            <section class="mt-4">
+              <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                    <% let page = 1 %>
+                     <% if(page > 1 ){ %>
+                  <li class="page-item disabled">
+                    <a class="page-link" href="/order?page=<%= page--  %>" >Previous</a>
+                  </li>
+                  <% } %>
+                  <li class="page-item"><a class="page-link" href="/profile?page=1">1</a><% page = 1 %></li>
+                  <li class="page-item"><a class="page-link" href="/profile?page=2">2</a><% page++ %></li>
+                  <li class="page-item"><a class="page-link" href="/profile?page=3">3</a><% page++ %></li>
+                  <li class="page-item">
+                    <a class="page-link" href="/profile?page=<%= page++  %>">Next</a>
+                  </li>
+                </ul>
+              </nav>
+            </section>
+
             </div>
             <div class="row mx-4 mt-3">
               <h2 class="mb-0">Coupons</h2>
             <hr class="mt-0">
             </div>
-            <% if(userDetails.coupons.length === 0) {%>
+            <% if(coupons.length === 0) {%>
               <div class="d-flex justify-content-center">
                 <h3 class="m-4">no Coupons found</h3>
               </div>      
               <% } %>
             <div class="row  mx-4">
-              <% userDetails.coupons.forEach(function(item){ %>
+              <% coupons.forEach(function(item){ %>
               <div class="col-sm-4">
-                <div class="card">
+                <div class="card h-100">
                   <div class="card-body">
+                    <div class="d-flex">
+                      <p class="fs-5 text-success mx-2"><i class="fa-solid fa-ticket"></i></p>
+                      <h4 class="card-title"><%= item.couponName %></h4>
+                    </div>
                     
-                    <h4 class="card-title"><%= item.coupon_id.couponName %></h4>
-                    <h5 class="card-title"><%= item.coupon_id.description %></h5>
-                    <p class="card-text">Code : <span class="fw-bold"><%= item.coupon_id.code %></span></p>
-                    <% if(item.isUsed) {%>
-                    <p class="card-text text-muted">Used</p>
-                    <% } else { %>
-                    <p class="card-text text-success m-0">Not Used</p>
-                    <% }%>
-                    <small><%= item.coupon_id.expriyDate.toLocaleString('default',{day: 'numeric', month: 'numeric', year: 'numeric'}) %></small>
+                    <h5 class="card-title"><%= item.description %></h5>
+                    <p class="card-text">Code : <span class="fw-bold"><%= item.code %></span></p>
+                     <% if(user.usedCoupons) {%>
+                      <% user.usedCoupons.forEach(function(coupon){ %>
+                        <% if(coupon == item.code) {%>
+                    <p class="card-text fw-bold text-muted m-0">Used</p>
+                    <% } else { %>                     
+                      <p class="card-text text-success m-0">Not Used</p>
+                    <% } })} else {%>                      
+                      <p class="card-text text-success m-0">Not Used</p>
+                      <% } %>
+                          <small>Expiry Date : <%= item.expriyDate.toLocaleString('default',{day: 'numeric', month: 'numeric', year: 'numeric'}) %></small>
                   </div>
                 </div>
               </div>
@@ -250,6 +294,8 @@ async function confirmDelete(){
         console.log(error);
     }
 }
+
+
 
 
 </script>

@@ -1,0 +1,88 @@
+<%- include('../partials/header.ejs') %>
+<%- include('../partials/admin-navebar.ejs')%>
+
+
+<div class="px-4 col-xl-10 col-lg-9 col-md-9 col-10">
+        <h2 class="mt-4 fw-bold subheading px-5">New Coupons</h2>
+        <hr size="4">
+    <div class="row mx-3">
+        <form class="row g-3" id="couponForm" action="/admin/coupon/add" method="post">
+            <div class="col-md-6">
+              <input type="text" name="couponName" class="form-control d-none" value="<%= coupon._id %>" id="couponId">
+              <% if( message.couponName ) { %>
+                <label for="floatingInputInvalid" class="text-danger"><%= message.couponName %></label>
+                <input type="text" name="couponName" class="form-control is-invalid" value="<%= coupon.couponName %>" id="floatingInputInvalid">
+              <% } else { %>
+                <label for="inputEmail4" class="form-label">Coupon Name</label>
+                <input type="text" name="couponName" value="<%= coupon.couponName %>" class="form-control" id="couponName">
+                <% } %>
+            </div>
+            <div class="col-md-6">
+              <% if( message.description ) { %>
+                <label for="floatingInputInvalid" class="text-danger"><%= message.description %></label>
+                <input type="text" name="description" value="<%= coupon.description %>" class="form-control is-invalid" id="floatingInputInvalid">
+              <% } else { %>
+              <label for="inputPassword4" class="form-label">Description</label>
+              <input type="text" name="description" class="form-control" value="<%= coupon.description %>" id="description">
+              <% } %>
+            </div>
+            <div class="col-md-6">
+              <% if( message.discount ) { %>
+                <label for="floatingInputInvalid" class="text-danger"><%= message.discount %></label>
+                <input type="text" name="discount" value="<%= coupon.discount %>" class="form-control is-invalid" id="floatingInputInvalid">
+              <% } else { %>
+              <label for="inputAddress2" class="form-label">Discount</label>
+              <input type="number" name="discount" value="<%= coupon.discount %>" class="form-control" id="discount">
+              <% } %>
+            </div>
+            <div class="col-md-6">
+              <% if( message.limit ) { %>
+                <label for="floatingInputInvalid" class="text-danger"><%= message.limit %></label>
+                <input type="text" name="limit" class="form-control is-invalid" value="<%= coupon.limit %>" id="floatingInputInvalid">
+              <% } else { %>
+                <label for="inputAddress2" class="form-label">limit</label>
+                <input type="number" name="limit" class="form-control" value="<%= coupon.limit %>" id="limit">
+                <% } %>
+              </div>
+            <!-- <div class="col-md-6">
+                <label for="inputAddress" class="form-label">Expriy Date :<%= coupon.expriyDate.toISOString().split('T')[0] %></label>
+                <input type="date" placeholder="" value="<%= coupon.expriyDate.toISOString().split('T')[0] %>" name="expriyDate" class="form-control" id="expriyDate" >
+              </div> -->
+            <div class="col-12">
+              <button type="submit" class="btn btn-primary">Add</button>
+            </div>
+          </form>
+    </div>
+
+</div>
+</div>
+</div>
+</div>
+
+<script>
+  let form = document.getElementById('couponForm');
+  let couponId = document.getElementById('couponId').value;
+
+  form.addEventListener('submit',async ()=>{
+    event.preventDefault();
+
+    let data = new FormData(form);
+    let value = Object.fromEntries(data.entries());
+    let jsonValue = JSON.stringify(value);
+    try {
+      let responce = fetch(`/admin/coupon/${couponId}/edit`,{
+        method:'PUT',
+        body:jsonValue,
+        headers:{
+          'Content-Type': 'application/json',
+        }
+      });
+      if(responce.ok){
+        window.location.href = '/admin/coupons'
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  })
+
+</script>

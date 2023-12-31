@@ -2,7 +2,27 @@
 <%- include('../partials/admin-navebar.ejs')%>
 
 <div class="px-4 col-xl-10 col-lg-9 col-md-9 col-10">
+  <div class="d-flex justify-content-between mb-">
     <h2 class="mt-4 fw-bold subheading">Orders</h2>
+    <div class="col-lg-2 d-flex justify-content-end">
+      <div class="dropdown mt-4 me-3">
+        <button class="btn btn-ligth dropdown-toggle border border-secondary px-5" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+          Filter
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+          <li><a class="dropdown-item" href="/admin/orders">All</a></li>
+          <li><a class="dropdown-item text-success" href="/admin/orders?orderStatus=Delivered">Delivered</a></li>
+          <li><a class="dropdown-item text-warning" href="/admin/orders?orderStatus=Shipping">Shipping</a></li>
+          <li><a class="dropdown-item fw-bold" href="/admin/orders?orderStatus=Confrimed">Confrimed</a></li>
+          <li><a class="dropdown-item" href="/admin/orders?orderStatus=Cancelled">Cancelled</a></li>                     
+          <li><a class="dropdown-item text-danger" href="/admin/orders?orderStatus=Return Pending">Return Pending</a></li>                     
+          <li><a class="dropdown-item text-dark" href="/admin/orders?orderStatus=Return Accepted">Return Accepted</a></li>                     
+        </ul>
+      </div>
+    </div>  
+  </div>               
+  
+
     <hr size="4">
 
     <div class="row mx-4 mt-4">
@@ -25,7 +45,12 @@
           <h6>Update</h6>
         </div>
       </div>
-
+      <% if(orders.length === 0) {%>
+        <hr>
+        <div class="d-flex justify-content-center">
+          <h2 class="mt-3">No Orders Found</h2>
+        </div>
+        <% } %>
       <% orders.forEach(function(order){ %>
         <div class="card border border-secondary" >
           <div class="row g-0 d-flex align-items-center px-2">

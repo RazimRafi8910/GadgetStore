@@ -3,11 +3,12 @@ const Category = require("../models/category");
 const User = require("../models/user");
 const fs = require("fs");
 const Order = require("../models/order");
-const { productInputValidation } = require("../config/inputValidation");
+const { productInputValidation, couponValidation } = require("../config/inputValidation");
 const OrderReturn = require("../models/orderReturn");
 const Wallet = require("../models/wallet");
 const Coupon = require("../models/coupon");
 const uuidv4 = require("../config/uuidGenerator");
+const PaymentRecipt = require("../models/paymentRecipt");
 
 module.exports = {
 
@@ -503,7 +504,18 @@ module.exports = {
 
   adminOrdersPage: async (req, res, next) => {
     try {
-      let orders = await Order.find().populate('user_id').sort({orderDate:-1});
+      let filterStatus = req.query.orderStatus || 'All';
+      let page = req.query.page || 1;
+      let limit = 6;
+      let skip = (page - 1) * limit;
+      let endIndex = page * limit;
+      let orders
+      if (filterStatus !== 'All') {
+        orders = await Order.find({ orderStatus: filterStatus }).populate('user_id');
+      } else {
+        orders = await Order.find().populate('user_id').sort({ orderDate: -1 });
+      };
+
       res.render('admin/orders', {
         tittle: 'GadgetStore | Admin Orders',
         orders
@@ -516,16 +528,22 @@ module.exports = {
   adminOrderDetails: async (req, res, next) => {
     try {
       let orderId = req.params.order_id;
+      let recipt;
       let order = await Order.findOne({ _id: orderId })
         .populate('user_id')
         .populate('orderAddress')
-        .populate('items.product')
+        .populate('items.product')     
       
-      let returnDetails  = await OrderReturn.findOne({ order_id: order._id });
+      let returnDetails = await OrderReturn.findOne({ order_id: order._id });
+
+      if (order.paymentMethod === 'onlinePayment') {
+        recipt = await PaymentRecipt.findOne({ order_id: order._id });
+      };
       
       res.render('admin/order-details', {
         tittle: 'GadgetStore | Order Details',
         order,
+        recipt,
         returnDetails
       })
     } catch (error) {
@@ -537,7 +555,13 @@ module.exports = {
     try {
       let orderId = req.params.order_id;
       let status = req.body;
-      let order = await Order.findOneAndUpdate({ _id: orderId }, { $set: { orderStatus: status.orderStatus } });
+      let order
+      if (status.orderStatus == 'Delivered') {
+        let deliveredDate = Date.now();
+        order = await Order.findOneAndUpdate({ _id: orderId }, { $set: { orderStatus: status.orderStatus, deleveredDate: deliveredDate } });
+      } else {
+        order = await Order.findOneAndUpdate({ _id: orderId }, { $set: { orderStatus: status.orderStatus } });
+      }
       
       res.status(200).json('done');
     } catch (error) {
@@ -611,7 +635,8 @@ module.exports = {
   addCouponPage: async (req, res, next) => {
     try {
       res.render('admin/add-coupon', {
-        tittle:'GadgetStore | Coupons'
+        tittle: 'GadgetStore | Coupons',
+        message:req.flash()
       })
     } catch (error) {
       next(error);
@@ -620,12 +645,21 @@ module.exports = {
 
   addCoupon: async (req, res, next) => {
     try {
-      let { couponName, description, discount, expriyDate } = req.body;
-      let code = uuidv4()
+      let { couponName, description, discount, limit, expriyDate } = req.body;
+
+      let result = couponValidation(couponName, description, discount, limit);
+
+      if (!result.validation) {
+        req.flash(`${result.input}`, `Invalid ${result.input}`);
+        return res.redirect(`/admin/coupon/add`);
+      }
+
+      let code = uuidv4() //generate coupon code
       let newCoupon = await Coupon.create({
         couponName,
         description,
         discount,
+        limit,
         code,
         expriyDate,
       });
@@ -637,6 +671,48 @@ module.exports = {
       res.redirect('/admin/coupons');
     } catch (error) {
       next(error);
+    }
+  },
+
+  editCouponPage: async (req, res, next) => {
+    try {
+      let couponId = req.params.coupon_id;
+      let coupon = await Coupon.findOne({ _id: couponId });
+      res.render('admin/edit-coupon', {
+        tittle: 'GadgetStore | Coupon Edit',
+        coupon,
+        message:req.flash()
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  editCoupon: async (req, res, next) => {
+    try {
+      let couponId = req.params.coupon_id;
+      let { couponName, description, discount, limit } = req.body;
+
+      //input validation
+      let result = couponValidation(couponName, description, discount, limit);
+      if (!result.validation) {
+        req.flash(`${result.input}`, `Invalid ${result.input}`);
+        return res.redirect(`/admin/coupon/add`);
+      };
+
+      let updateFields = {
+        couponName,
+        description,
+        discount,
+        limit,
+      };
+      let coupon = await Coupon.findOneAndUpdate({ _id: couponId }, updateFields, { new: true });
+      
+      if (coupon) {
+        res.status(200).json({ success: true });
+      };
+    } catch (error) {
+      next(error)
     }
   },
 

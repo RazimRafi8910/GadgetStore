@@ -93,7 +93,7 @@ function productInputValidation(productName, price, brand, description, stock) {
 
     if (description.trim() == '') {
         result.validation = false;
-        result.input = 'brand';
+        result.input = 'description';
         return result;
     };
 
@@ -112,4 +112,36 @@ function productInputValidation(productName, price, brand, description, stock) {
     return result;
 }
 
-module.exports = { isValidInput, addressValidation, productInputValidation };
+function couponValidation(couponName,description,discount,limit) {
+    let result = {
+        validation: true
+    };
+
+    if (couponName.trim() == '' || !namePattern.test(couponName)) {
+        result.validation = false;
+        result.input = 'couponName';
+        return result;
+    };
+
+    if (description.trim() == '') {
+        result.validation = false;
+        result.input = 'description';
+        return result;
+    };
+
+    if (discount < 0 || discount >100) {
+        result.validation = false;
+        result.input = 'discount';
+        return result;
+    }
+
+    if (limit < 0) {
+        result.validation = false;
+        result.input = 'limit';
+        return result;
+    }
+
+    return result;
+}
+
+module.exports = { isValidInput, addressValidation, productInputValidation, couponValidation };

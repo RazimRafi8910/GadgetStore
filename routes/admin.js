@@ -44,6 +44,8 @@ router.put('/order/:order_id/return', isAdmin, adminController.returnOrder);
 //coupon management
 router.get('/coupons',isAdmin, adminController.couponsPage);
 router.get('/coupon/add',isAdmin, adminController.addCouponPage);
+router.get('/coupon/:coupon_id/edit', isAdmin, adminController.editCouponPage);
+router.put('/coupon/:coupon_id/edit', isAdmin, adminController.editCoupon);
 router.post('/coupon/add',isAdmin, adminController.addCoupon);
 router.delete('/coupon/:id', isAdmin, adminController.deleteCoupon);
 

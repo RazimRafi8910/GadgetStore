@@ -60,10 +60,10 @@
         try {
             let responce = await fetch(`/admin/category/${categoryId}/edit`,{
                 method:'PUT',
+                body:jsonValue,
                 headers:{
                     'Content-Type': 'application/json',
-                },
-                body:jsonValue
+                }
             });
             if(responce.ok){
                 window.location.href='/admin/category';
