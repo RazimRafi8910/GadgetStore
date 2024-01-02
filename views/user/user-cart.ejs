@@ -133,7 +133,7 @@
                   <div class="p-4">
                     <h1 class="text-dark h4">Get Coupon Code</h1>
                     <!-- <p class="mt-3 text-secondary"><i class="fas fa-check-circle me-2 text-warning"></i>Get 20% off on purchases above 10,000 Rupees</p> -->
-                    <p><%= coupon[0].description %></p>
+                    <p><%= coupons[0].description %></p>
                     <div><a href="/products" class="px-4 btn btn-dark rounded-pill">Shop Now</a></div>
                     <div class="mt-1"><button type="button" class="btn fw-bold text-secondary" data-bs-dismiss="modal">No thanks! </button></div>
                   </form>
@@ -161,7 +161,13 @@
         <div class="mb-3 row">
           <label for="couponCode" class="col-sm-2 col-form-label fw-bold">Code</label>
           <div class="col-sm-10">
-            <input type="text" class="form-control" id="couponCode" name="couponCode">
+            <!-- <input type="text" class="form-control" id="couponCode" name="couponCode"> -->
+            <select class="form-select" aria-label="Default select example" name="couponCode">
+              <option selected>select Coupon</option>
+              <% coupons.forEach(function(coupon){ %>
+              <option value="<%= coupon.code %>"><%= coupon.couponName %></option>
+             <% }) %>
+            </select>
           </div>
         </div>
         <p>Discount will add to total Price</p>

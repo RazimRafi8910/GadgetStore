@@ -28,7 +28,7 @@ function isValidInput(inputs) {
 
 };
 
-function addressValidation(houseName,town,address,city,state,pincode) {
+function addressValidation(houseName, town, address, city, state, pincode) {
     let result = {
         validation:true
     }
@@ -57,7 +57,7 @@ function addressValidation(houseName,town,address,city,state,pincode) {
         return result
     };
 
-    if (!pincode.length === 6) {
+    if (pincode.length !== 6) {
         result.validation = false;
         result.input = 'pincode';
         return result

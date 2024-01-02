@@ -50,4 +50,6 @@ router.post('/coupon/add',isAdmin, adminController.addCoupon);
 router.delete('/coupon/:id', isAdmin, adminController.deleteCoupon);
 
 
+//offer management
+
 module.exports = router;

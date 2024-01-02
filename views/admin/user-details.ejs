@@ -76,17 +76,25 @@
         <div class="col-6 mb-3">
           <h4>Address</h4>
           <ul>
+            <% userAddress.forEach(function(address){ %>
             <li>
-              <p class="text-muted">No Address</p>
+              <div>
+                <p class=" fs-5 ms-3 my-0"><%= address.houseName %></p>
+                <p class="text- ms-3 my-0"><%= address.address %>,<%= address.city %>,<%= address.state %></p>
+                <p class="fs-6 ms-3 text-"><%= address.pincode %></p>
+            </div> 
             </li>
+            <% }) %>
           </ul>
         </div>
         <div class="col-6 mb-3">
           <h4>Orders</h4>
           <ul>
+            <% userOrders.forEach(function(order){ %>
             <li>
-              <p class="text-muted">No Orders</p>
+              <a class="text-decoration-none" href="/admin/orders/<%= order._id %>"><p class="fs-6 text-dark"><%= order._id %></p></a>
             </li>
+            <% }) %>
           </ul>
         </div>
       </div>

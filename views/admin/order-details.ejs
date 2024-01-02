@@ -106,9 +106,11 @@
                 <div class="d-flex">
                     <h5 class="mt-1">Address :</h5>
                     <div>
-                        <p class=" fs-5 ms-3 my-0"><%= order.orderAddress.houseName %></p>
+                      <% if(order.orderAddress) {%>
+                        <p class=" fs-5 ms-3 my-0"><%= order.orderAddress %></p>
                         <p class="text- ms-3 my-0"><%= order.orderAddress.address %>,<%= order.orderAddress.city %>,<%= order.orderAddress.state %></p>
                         <p class="fs-6 ms-3 text-"><%= order.orderAddress.pincode %></p>
+                        <% } %>
                     </div> 
                 </div>
                 
@@ -133,7 +135,13 @@
           </div>
           <div class="d-flex justify-content-between">
             <p class="m-2">Payment:</p>
-            <p class="m-2 text-dark">Cash On Delivery</p>
+            <% if(order.paymentMethod === 'cashOnDelivery') {%>
+              <p class="m-2 text-dark">Cash On Delivery</p>
+              <% } else if(order.paymentMethod === 'PaidOnWallet') { %>
+                <p class="m-2 text-success fw-bold">Paid with Wallet</p>
+                <% } else { %>
+                  <p class="m-2 text-success">Paid</p>
+                  <% } %>
           </div>
           <hr />
           <div class="d-flex justify-content-between">

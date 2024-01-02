@@ -9,6 +9,7 @@ const Wallet = require("../models/wallet");
 const Coupon = require("../models/coupon");
 const uuidv4 = require("../config/uuidGenerator");
 const PaymentRecipt = require("../models/paymentRecipt");
+const Address = require("../models/address");
 
 module.exports = {
 
@@ -387,9 +388,13 @@ module.exports = {
     try {
       let userId = req.params.user_id;
       let user = await User.findOne({ _id: userId });
+      let userAddress = await Address.find({ user_id: userId });
+      let userOrders = await Order.find({ user_id: userId });
       res.render("admin/user-details", {
         tittle: "GadgetStore | Admin User",
         user,
+        userAddress,
+        userOrders
       });
     } catch (error) {}
   },

@@ -30,7 +30,7 @@ input::-webkit-inner-spin-button {
                 <div class="col-md-6">
                   <div class="form-floating mb-3">
                     <% if( message.housename ) { %>
-                      <input type="text" class="form-control is-invalid" id="floatingInputInvalid">
+                      <input type="text" class="form-control is-invalid" id="floatingInputInvalid" name="houseName" >
                       <label for="floatingInputInvalid" class="text-danger"><%= message.housename %></label>
                       <% } else { %>
                     <input type="text" class="form-control" id="floatingInput" name="houseName">
@@ -41,7 +41,7 @@ input::-webkit-inner-spin-button {
                 <div class="col-md-6">
                     <div class="form-floating mb-3">
                       <% if( message.town ) { %>
-                        <input type="text" class="form-control is-invalid" id="floatingInputInvalid">
+                        <input type="text" class="form-control is-invalid" id="floatingInputInvalid" name="town">
                         <label for="floatingInputInvalid" class="text-danger"><%= message.town %></label>
                         <% } else { %>
                         <input type="text"  class="form-control" id="floatingInput" name="town">
@@ -51,7 +51,7 @@ input::-webkit-inner-spin-button {
                 </div>
                   <div class="form-floating">
                     <% if( message.address ) { %>
-                      <input type="text" class="form-control is-invalid" id="floatingInputInvalid"  style="height: 100px">
+                      <input type="text" class="form-control is-invalid" id="floatingInputInvalid" name="address" style="height: 100px">
                       <label for="floatingInputInvalid" class="text-danger"><%= message.address %></label>
                       <% } else { %>
                         <textarea class="form-control" name="address" placeholder="Leave a comment here" id="floatingTextarea2" style="height: 100px"></textarea>
@@ -61,7 +61,7 @@ input::-webkit-inner-spin-button {
                 <div class="col-md-6">
                     <div class="form-floating mb-3">
                       <% if( message.city ) { %>
-                        <input type="text" class="form-control is-invalid" id="floatingInputInvalid">
+                        <input type="text" class="form-control is-invalid" name="city" id="floatingInputInvalid">
                         <label for="floatingInputInvalid" class="text-danger"><%= message.city %></label>
                         <% } else { %>
                         <input type="text"  class="form-control" id="floatingInput" name="city">
@@ -72,7 +72,7 @@ input::-webkit-inner-spin-button {
                 <div class="col-md-4">
                     <div class="form-floating mb-3">
                       <% if( message.state ) { %>
-                        <input type="text" class="form-control is-invalid" id="floatingInputInvalid">
+                        <input type="text" class="form-control is-invalid" name="state" id="floatingInputInvalid">
                         <label for="floatingInputInvalid" class="text-danger"><%= message.state %></label>
                         <% } else { %>
                         <input type="text" class="form-control" id="floatingInput" name="state">
@@ -83,7 +83,7 @@ input::-webkit-inner-spin-button {
                 <div class="col-md-2">
                     <div class="form-floating mb-3">
                       <% if( message.pincode ) { %>
-                        <input type="number" class="form-control is-invalid" id="floatingInputInvalid">
+                        <input type="number" class="form-control is-invalid" name="pincode" id="floatingInputInvalid">
                         <label for="floatingInputInvalid" class="text-danger"><%= message.pincode %></label>
                         <% } else { %>
                         <input type="number" class="form-control" id="floatingInput" name="pincode">

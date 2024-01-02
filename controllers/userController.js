@@ -397,7 +397,7 @@ module.exports = {
     try {
       let user = req.user;
       let userCart = await Cart.findOne({ user_id: user._id }).populate('items.product');
-      let coupon = await Coupon.find({ couponName: 'Buymore' });
+      let coupons = await Coupon.find().lean();
       let totalPrice = 0;
       let discountPrice = 0;
       if (userCart) {
@@ -419,7 +419,7 @@ module.exports = {
         user,
         userCart,
         totalPrice,
-        coupon,
+        coupons,
         discountPrice
       });
     } catch (error) {
@@ -827,6 +827,7 @@ module.exports = {
       //razorpay online paymanet
     if (totalPrice !== walletAmount && paymentMethod === 'onlinePayment') {  
       let razorPayOrder = await razorPayOrderGenerate(order._id, totalPrice);
+      await Order.updateOne({ _id: order._id }, { $set: { orderStatus: 'Not paid' } });
       return res.status(200).json({ success: true, payment: true, orderId: order._id, razorPayOrder, user });
     }
 
@@ -843,7 +844,7 @@ module.exports = {
       let user = req.user;
       let orderId = req.params.order_id;
       let { razorpay_payment_id, razorpay_order_id, razorpay_signature } = req.body;
-
+      await Order.updateOne({ _id: orderId }, { $set: { orderStatus: 'Processing' } });
       if (razorpay_payment_id) {
         await PaymentRecipt.create({
           order_id: orderId,
