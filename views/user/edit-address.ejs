@@ -15,7 +15,7 @@ input::-webkit-inner-spin-button {
             <hr class="mt-0">
         </div>
 
-            <form class="row mb-5 mt-2 g-3" action="/address/<%= address._id %>/edit" method="post">
+            <form class="row mb-5 mt-2 g-3 needs-validation" action="/address/<%= address._id %>/edit" method="post" novalidate>
                 <div class="col-md-6">
                   <div class="form-floating mb-3">
                     <% if( message.housename ) { %>
@@ -104,9 +104,26 @@ input::-webkit-inner-spin-button {
               </div>
 
     </div>
-    
-
-
-
 
     <%- include('../partials/footer.ejs') %>
+    <script>
+//       (function () {
+//   'use strict'
+
+//   // Fetch all the forms we want to apply custom Bootstrap validation styles to
+//   var forms = document.querySelectorAll('.needs-validation')
+
+//   // Loop over them and prevent submission
+//   Array.prototype.slice.call(forms)
+//     .forEach(function (form) {
+//       form.addEventListener('submit', function (event) {
+//         if (!form.checkValidity()) {
+//           event.preventDefault()
+//           event.stopPropagation()
+//         }
+
+//         form.classList.add('was-validated')
+//       }, false)
+//     })
+// })()
+    </script>

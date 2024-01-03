@@ -25,7 +25,7 @@ input::-webkit-inner-spin-button {
               </div>
               <% } %>
 
-    <form action="/admin/product/add" method="post" enctype="multipart/form-data">
+    <form action="/admin/product/add" class="needs-validation" method="post" enctype="multipart/form-data" novalidate>
     <div class="row d-flex justify-content-center">
 
         <div class="col-xl-5 col-lg-4 col-md-4 col-10">
@@ -291,6 +291,26 @@ function addInputBox() {
 
         container.insertBefore(newInputBox, container.lastChild);
     }
+
+    (function () {
+        'use strict'
+
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        var forms = document.querySelectorAll('.needs-validation')
+
+        // Loop over them and prevent submission
+        Array.prototype.slice.call(forms)
+            .forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+                }
+
+                form.classList.add('was-validated')
+            }, false)
+            })
+    })()
 
 
 </script>

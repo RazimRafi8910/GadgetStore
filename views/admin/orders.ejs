@@ -11,12 +11,13 @@
         </button>
         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
           <li><a class="dropdown-item" href="/admin/orders">All</a></li>
-          <li><a class="dropdown-item text-success" href="/admin/orders?orderStatus=Delivered">Delivered</a></li>
+          <li><a class="dropdown-item text-muted" href="/admin/orders?orderStatus=Processing">Processing</a></li>
           <li><a class="dropdown-item text-warning" href="/admin/orders?orderStatus=Shipping">Shipping</a></li>
           <li><a class="dropdown-item fw-bold" href="/admin/orders?orderStatus=Confrimed">Confrimed</a></li>
-          <li><a class="dropdown-item" href="/admin/orders?orderStatus=Cancelled">Cancelled</a></li>                     
+          <li><a class="dropdown-item text-danger" href="/admin/orders?orderStatus=Cancelled">Cancelled</a></li>                     
+          <li><a class="dropdown-item text-success" href="/admin/orders?orderStatus=Delivered">Delivered</a></li>
           <li><a class="dropdown-item text-danger" href="/admin/orders?orderStatus=Return Pending">Return Pending</a></li>                     
-          <li><a class="dropdown-item text-dark" href="/admin/orders?orderStatus=Return Accepted">Return Accepted</a></li>                     
+          <li><a class="dropdown-item text-success" href="/admin/orders?orderStatus=Return Accepted">Return Accepted</a></li>                     
         </ul>
       </div>
     </div>  

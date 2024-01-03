@@ -37,6 +37,10 @@ let productShcema = mongoose.Schema({
     isListed: {
         type: Boolean,
         default: true
+    },
+    haveOffer: {
+        type: Boolean,
+        default:false
     }
 })
 

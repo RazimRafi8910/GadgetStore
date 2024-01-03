@@ -1,0 +1,124 @@
+<%- include('../partials/header.ejs') %>
+<%- include('../partials/admin-navebar.ejs')%>
+
+
+<div class="px-4 col-xl-10 col-lg-9 col-md-9 col-10">
+    <div class="d-flex justify-content-between">
+        <h2 class="mt-4 fw-bold subheading px-5">Offers</h2>
+        <a href="/admin/offer/product/add">
+            <button type="button" class="btn btn-primary mt-4 mx-4 px-5 fw-bold">Add Offers</button> 
+        </a>
+    </div>
+    <hr size="4">
+
+    <div class="row mx-3">
+        <h3>Product Offers</h3>
+        <hr>
+    </div>
+    <% productOffers.forEach(function(product){ %>
+    <div class="row mx-3">
+        <div class="card mb-3 ">
+            <div class="row g-0 d-flex align-items-center ">
+                <!-- <div class="col-lg-1 col-md-1 d-flex justify-content-center">
+                    <button type="button" onclick="removeItem('')" class="btn btn-danger py-0">-</button>
+                  </div> -->
+              <div class="col-lg-1 col-md-4 d-flex justify-content-center" >
+                <a class="text-secondary text-decoration-none" href="/product/">
+                <img src="<%= product.product_id.images[0] %>" class="img-fluid rounded-start " alt="" style="width: 10rem;">
+            </a>
+              </div>
+
+              <div class="col-lg-2 col-md-3">
+                <div class="card-body">                 
+                  <h5 class="card-title fw-bold text-start"><%= product.product_id.productName %></h5>
+                </div>
+              </div>
+
+              <div class="col-lg-2 col-md-3">
+                <div class="card-body text-center">
+                    <h6 class="card-subtitle mb-2 text-muted">Product Price</h6>
+                  <h5 class="card-title"><%= product.product_id.price %></h5>
+                </div>
+              </div>
+
+              <div class="col-lg-1 col-md-2">
+                <div class="card-body text-center">
+                    <h6 class="card-subtitle mb-2 text-muted">Discount </h6>
+                  <h5 class="card-title">%<%= product.discount %></h5>
+                </div>
+              </div>
+
+              <div class="col-lg-2 col-md-2">
+                <div class="card-body text-center">
+                    <h6 class="card-subtitle mb-2 text-muted">Disount Price</h6>
+                    <% let discountPrice = (product.product_id.price / 100) * product.discount; %>
+                  <h5 class="card-title"><%= product.product_id.price - discountPrice %></h5>
+                </div>
+              </div>
+
+              <div class="col-lg-2 col-md-3">
+                <div class="card-body">   
+                    <h6 class="card-subtitle mb-2 text-muted">Expiry Date</h6>              
+                  <h5 class="card-title fw-bold text-start"><%= product.expiryDate.toLocaleString('default',{day: 'numeric', month: 'numeric', year: 'numeric'}) %></h5>
+                </div>
+              </div>
+
+              <div class="col-lg-2 col-md-3">
+                <button class="btn btn-danger fw-bold" data-bs-toggle="modal" data-bs-target="#deleteProductOffer" onclick="getProductId('<%= product._id %>')" type="button"><i class="fa-solid fa-trash"></i></button>
+                    <a href="/admin/coupon/edit"><button class="btn btn-outline-dark fw-bold" type="button"><i class="fa-solid fa-pen-to-square"></i></button></a>
+              </div>
+
+            </div>
+          </div>
+    </div>
+<% }) %>
+
+<!--modal for delete coupon-->
+<div class="modal fade" id="deleteProductOffer" tabindex="-1" aria-labelledby="deleteProductOffer" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          Do you want to delete this Coupon?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-danger" onclick="deleteProductOffer()">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+</div>
+</div>
+</div>
+</div>
+<script>
+    let offerId;
+
+    function getProductId(id){
+        offerId = id;
+    };
+
+    async function deleteProductOffer(){
+        try {
+            let responce = await fetch(`/admin/offer/product/${offerId}/delete`,{
+                method:'DELETE',
+                headers:{
+                    'Content-Type': 'application/json',
+                },
+            });
+            if(responce.ok){
+                window.location.reload();
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>

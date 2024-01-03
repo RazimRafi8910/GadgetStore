@@ -3,49 +3,59 @@
 
 
 <div class="px-4 col-xl-10 col-lg-9 col-md-9 col-10">
-        <h2 class="mt-4 fw-bold subheading px-5">New Coupons</h2>
+        <h2 class="mt-4 fw-bold subheading px-5">Product Offer</h2>
         <hr size="4">
     <div class="row mx-3">
-        <form class="row g-3 needs-validation" action="/admin/coupon/add" method="post" novalidate>
+        <form class="row g-3 needs-validation" action="/admin/offer/product/add"  method="post" novalidate>
             <div class="col-md-6">
               <% if( message.couponName ) { %>
-                <label for="floatingInputInvalid" class="text-danger"><%= message.couponName %></label>
-                <input type="text" name="couponName" class="form-control is-invalid" id="floatingInputInvalid">
+                <label for="inputState" class="form-label">Product</label>
+                <select class="form-select" name="product" aria-label="Default select example">
+                    <option selected>Select...</option>
+                    <% products.forEach(function(product){ %>
+                    <option value="<%= product._id %>"><%= product.productName %></option>                   
+                    <% }) %>
+                  </select>
               <% } else { %>
-                <label for="inputEmail4" class="form-label">Coupon Name</label>
-                <input type="text" name="couponName" class="form-control" id="couponName" required>
+                <label for="inputState" class="form-label">Product</label>
+                <select class="form-select" name="product" aria-label="Default select example">
+                    <option selected>Select...</option>
+                    <% products.forEach(function(product){ %>
+                    <option value="<%= product._id %>"><%= product.productName %></option>                   
+                    <% }) %>
+                  </select>
                 <% } %>
             </div>
-            <div class="col-md-6">
+            <!-- <div class="col-md-6">
               <% if( message.description ) { %>
                 <label for="floatingInputInvalid" class="text-danger"><%= message.description %></label>
                 <input type="text" name="description" class="form-control is-invalid" id="floatingInputInvalid">
               <% } else { %>
               <label for="inputPassword4" class="form-label">Description</label>
-              <input type="text" name="description" class="form-control" id="description" required>
+              <input type="text" name="description" class="form-control" id="description">
               <% } %>
-            </div>
+            </div> -->
             <div class="col-md-6">
               <% if( message.discount ) { %>
                 <label for="floatingInputInvalid" class="text-danger"><%= message.discount %></label>
                 <input type="text" name="discount" class="form-control is-invalid" id="floatingInputInvalid">
               <% } else { %>
               <label for="inputAddress2" class="form-label">Discount</label>
-              <input type="number" name="discount" class="form-control" id="discount" required>
+              <input type="number" name="discount"  class="form-control" id="discount" required>
               <% } %>
             </div>
-            <div class="col-md-6">
+            <!-- <div class="col-md-6">
               <% if( message.limit ) { %>
                 <label for="floatingInputInvalid" class="text-danger"><%= message.limit %></label>
                 <input type="text" name="limit" class="form-control is-invalid" id="floatingInputInvalid">
               <% } else { %>
                 <label for="inputAddress2" class="form-label">limit</label>
-                <input type="number" name="limit" class="form-control" id="limit" required>
+                <input type="number" name="limit" class="form-control" id="limit">
                 <% } %>
-              </div>
+              </div> -->
             <div class="col-md-6">
-                <label for="inputAddress" class="form-label">Date</label>
-                <input type="date" name="expriyDate" class="form-control" id="expriyDate" required>
+                <label for="inputAddress" class="form-label">Expiry Date</label>
+                <input type="date" name="expiryDate" class="form-control" id="expiryDate" >
               </div>
             <div class="col-12">
               <button type="submit" class="btn btn-primary">Add</button>
@@ -58,7 +68,7 @@
 </div>
 </div>
 <script>
-  (function () {
+    (function () {
   'use strict'
 
   // Fetch all the forms we want to apply custom Bootstrap validation styles to

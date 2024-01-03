@@ -10,6 +10,7 @@ const Coupon = require("../models/coupon");
 const uuidv4 = require("../config/uuidGenerator");
 const PaymentRecipt = require("../models/paymentRecipt");
 const Address = require("../models/address");
+const ProductOffer = require("../models/productOffer");
 
 module.exports = {
 
@@ -726,6 +727,62 @@ module.exports = {
       let couponId = req.params.id;
       let coupon = await Coupon.findOneAndDelete({ _id: couponId });
       if (coupon) {
+        res.status(200).json({ success: true });
+      }
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  offerPage: async (req, res, next) => {
+    try {
+      let productOffers = await ProductOffer.find().populate('product_id');
+      res.render('admin/offer', {
+        tittle: 'GadgetStore | Offer',
+        message: req.flash(),
+        productOffers
+      }); 
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  productOfferAddPage: async(req, res, next) => {
+    try {
+      let products = await Product.find().lean();
+      res.render('admin/add-product-offer', {
+        tittle: 'GadgetStore | Product Offer',
+        message: req.flash(),
+        products
+      })
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  addProductOffer: async (req, res, next) => {
+    try {
+      let { product, discount, expiryDate } = req.body;
+      await Product.updateOne({ _id: product }, { $set: { haveOffer: true } });
+      let productOffer = await ProductOffer.create({
+        product_id: product,
+        discount,
+        expiryDate
+      });
+
+      if (productOffer) { res.redirect('/admin/offers'); };
+
+    } catch (error) {
+      next(error)
+    }
+  },
+
+  deleteProductOffer: async (req, res, next) => {
+    try {
+      let offerId = req.params.offer_id;
+      let offer = await ProductOffer.findOneAndDelete({ _id: offerId });
+      let product = await Product.findOneAndUpdate({ _id: offer.product_id }, { $set: { haveOffer: false } });
+      if (product) {
         res.status(200).json({ success: true });
       }
     } catch (error) {

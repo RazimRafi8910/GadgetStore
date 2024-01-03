@@ -1,0 +1,48 @@
+<%- include('../partials/header.ejs') %>
+    <%- include('../partials/user-navbar.ejs') %>
+
+    <style>
+     
+         
+    </style>
+    
+    <body>
+        <div class="container">
+            <div class="row d-flex justify-content-center my-4">
+                <div class="col-lg-4">
+                    <% if(order.paymentMethod == 'onlinePayment') { %>
+                    <div class="card text-center">
+                        <div class="d-flex justify-content-center py-3">
+                            <img src="/image/orderSuccess.png" style="width: 15rem;" class="card-img-top" alt="...">
+                        </div>
+                        <div class="card-body">
+                          <h3 class="card-title text-success">Payment Success</h3>
+                          
+                          <p class="card-text fs-5 mt-3">Your <span class="fw-bold">Order</span> has been Placed successfully</p>
+                          <p class="cart-subtitle m-0"><span class="fw-bold">Order ID :</span> <%= order._id %> </p>
+                          <small class="cart-subtitle"><span class="fw">Payment ID</span> :1234545667 </small><br>
+                          <a href="/order/<%= order._id %>" class="btn btn-dark mt-2">View Order</a>
+                        </div>
+                      </div>
+                      <% } else { %>
+                        <div class="card text-center">
+                            <div class="d-flex justify-content-center py-3">
+                                <img src="/image/orderSuccess.png" style="width: 15rem;" class="card-img-top" alt="...">
+                            </div>
+                            <div class="card-body">
+                              <h3 class="card-title text-success">Order Placed</h3>
+                              
+                              <p class="card-text fs-5 mb-1 mt-3">Your <span class="fw-bold">Order</span> has been Placed successfully</p>
+                              <p class="cart-subtitle m-0 mb-2"><span class="fw-bold">Order ID :</span> <%= order._id %> </p>
+                              <a href="/order/<%= order._id %>" class="btn btn-dark mt-2">View Order</a>
+                            </div>
+                          </div>
+                          <% } %>
+                </div>              
+           </div>
+        </div>
+
+    <%- include('../partials/footer.ejs') %>
+    <script>
+     
+    </script>

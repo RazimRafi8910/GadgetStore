@@ -51,5 +51,10 @@ router.delete('/coupon/:id', isAdmin, adminController.deleteCoupon);
 
 
 //offer management
+router.get('/offers', isAdmin, adminController.offerPage);
+router.get('/offer/product/add', isAdmin, adminController.productOfferAddPage);
+router.post('/offer/product/add', isAdmin, adminController.addProductOffer);
+router.delete('/offer/product/:offer_id/delete', isAdmin, adminController.deleteProductOffer);
+
 
 module.exports = router;

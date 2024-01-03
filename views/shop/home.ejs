@@ -30,9 +30,9 @@
   <header class="mt-5 mb-2">
     <h2 class="ps-1 d-block">New Product</h2>
   </header>
-  <div class="row">
+  <div class="row d-flex justify-content-center">
     <% newProducts.forEach(function(product){ %>
-      <div class="col-lg-3 col-md-6 col-sm-12 d-flex justify-content-center">
+      <div class="col-lg-3 col-md-6 col-10 d-flex justify-content-center">
           <div class="card my-2 w-100 shadow-2-strong" style="width: 18rem;" >
             <a href="/product/<%= product._id %>/view" class="text-decoration-none text-dark">
               <img src="<%= product.images[0] %>" style="height: 16rem;" class="card-img-top" alt="product image">
@@ -67,18 +67,19 @@
   <header class="my-4">
     <h3 class="d-block">Mobiles</h3>
   </header>
-  <div class="row">
+  <div class="row d-flex justify-content-center">
     <% products.forEach(function(product){ %>
       <% if( product.category.categoryName==='mobile') {%>
-        <div class="col-lg-3 col-md-6 col-sm-12 d-flex justify-content-center">
-          <div class="card my-2 w-100  shadow-2-strong" style="width: 18rem;" >
+        <div class="col-lg-3 col-md-6 col-10 d-flex justify-content-center">
+          <div class="card my-2 w-100 shadow-2-strong"  >
             <a href="/product/<%= product._id %>/view" class="text-decoration-none text-dark">
               <img src="<%= product.images[0] %>" style="height: 16rem;" class="card-img-top" alt="product image">
               <div class="card-body d-flex flex-column">
                 <h5 class="card-title fw-bold"><%= product.productName %></h5>
                 <div class=""> 
                   <p class="card-text text-decoration-line-through m-0">&#8377 <%= product.price %></p>
-                  <p class="card-text fw-bold m-0"><span class="text-success">Offer</span> &#8377 <%= product.price %></p>
+                  <p class="card-text fw-bold m-0"><span class="text-success">%12 Offer</span> &#8377 <%= product.price %></p>
+                  
                 </div>
               </a>
                 <div class="d-flex align-items-end pt-1 px-0 pb-0 mt-auto">

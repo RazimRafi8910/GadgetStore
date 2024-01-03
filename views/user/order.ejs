@@ -115,9 +115,11 @@
                 <div class="d-flex">
                     <h5 class="mt-1">Address :</h5>
                     <div>
+                      <% if(userOrder.orderAddress) {%>
                         <p class=" fs-5 ms-3 my-0"><%= userOrder.orderAddress.houseName %></p>
                         <p class="text- ms-3 my-0"><%= userOrder.orderAddress.address %>,<%= userOrder.orderAddress.city %>,<%= userOrder.orderAddress.state %></p>
                         <p class="fs-6 ms-3 text-"><%= userOrder.orderAddress.pincode %></p>
+                        <% } %>
                     </div> 
                 </div>
                 

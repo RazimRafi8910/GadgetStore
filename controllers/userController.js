@@ -855,9 +855,26 @@ module.exports = {
         req.flash('message', 'Payment success');
         await Cart.deleteOne({ user_id: user._id });
       }
-      res.redirect(`/order/${orderId}`);
+      res.redirect(`/order/${orderId}/success`);
+      // res.redirect(`/order/${orderId}`);
     } catch (error) {
       next(error);
+    }
+  },
+
+  orderSuccessPage: async (req, res, next) => {
+    try {
+      let user = req.user;
+      let orderId = req.params.order_id;
+      let order = await Order.findOne({ _id: orderId });
+      res.render('user/payment-success',{
+        tittle: 'GagetStore | Order',
+        user,
+        order
+      })
+
+    } catch (error) {
+      next(error)  
     }
   },
 

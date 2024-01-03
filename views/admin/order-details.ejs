@@ -107,7 +107,7 @@
                     <h5 class="mt-1">Address :</h5>
                     <div>
                       <% if(order.orderAddress) {%>
-                        <p class=" fs-5 ms-3 my-0"><%= order.orderAddress %></p>
+                        <p class=" fs-5 ms-3 my-0"><%= order.orderAddress.houseName %></p>
                         <p class="text- ms-3 my-0"><%= order.orderAddress.address %>,<%= order.orderAddress.city %>,<%= order.orderAddress.state %></p>
                         <p class="fs-6 ms-3 text-"><%= order.orderAddress.pincode %></p>
                         <% } %>
@@ -149,9 +149,9 @@
             <p class="m-2">+ Rs <%= order.totalPrice %> </p>
           </div>
         
-        <div class="card-footer px-0 py-0">
+        <!-- <div class="card-footer px-0 py-0">
         
-          </div>
+          </div> -->
         </div>
   </div>
 
