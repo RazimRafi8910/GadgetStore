@@ -211,7 +211,24 @@
                         <div class="card-body d-flex flex-column">
                           <a href="/product/<%= product._id %>/view" class="text-decoration-none text-dark">
                           <h5 class="card-title fw-bold"><%= product.productName %></h5>
-                          <p class="card-text">&#8377 <%= product.price %></p>
+                          <% if(product.haveOffer) {%>
+                            <% productOffer.forEach(function(offer){ %>
+                              <% if(offer.product_id.toString() == product._id) {%>
+                          <p class="card-text text-decoration-line-through m-0">&#8377 <%= product.price %></p>
+                          <p class="card-text fw-bold m-0"><span class="text-success">%<%= offer.discount %> Offer</span> &#8377 <%= offer.offerPrice  %></p>
+                          <% }}) %>
+                          <% } else if(!product.haveOffer && product.category.haveOffer ) {%>
+                            <% for(const offer of categoryOffers) {%>
+                              <% if(offer.category_id.toString() == product.category._id) {%>
+                                <p class="card-text text-decoration-line-through m-0">&#8377 <%= product.price %></p>
+                                <% let discountPrice = (product.price/100) * offer.discount  %>
+                                <p class="card-text fw-bold m-0"><span class="text-success">%<%= offer.discount %> Offer</span> &#8377 <%= product.price-discountPrice  %></p>
+                              <% } %>
+                            <% } %>
+        
+                          <% } else {%>
+                            <p class="card-text  m-0">&#8377 <%= product.price %></p>
+                            <% } %>
                         </a>
                           <div class="d-flex align-items-end pt-1 px-0 pb-0 mt-auto">
                             <button type="button" onclick="addToCart('<%= product._id %>')" class="btn btn-dark shadow-0 me-1">Add to cart</button>

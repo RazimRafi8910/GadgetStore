@@ -14,21 +14,26 @@ const Coupon = require('../models/coupon');
 const razorPayOrderGenerate = require('../config/razorPay');
 const Wishlist = require('../models/wishlist');
 const PaymentRecipt = require('../models/paymentRecipt');
+const ProductOffer = require('../models/productOffer');
+const CategoryOffer = require('../models/categoryOffer');
 
 module.exports = {
   
   userHomePage: async (req, res, next) => {
     try {
       let user = req.user;
-      let newProducts = await Product.find({ isListed: true }).limit(4).lean();
+      let newProducts = await Product.find({ isListed: true }).limit(4).populate('category').lean();
       let products = await Product.find({ isListed: true }).populate('category').lean();
-      // let userWishlist = await Wishlist.findOne({ user_id: user._id }).populate('items.product_id');
+      let productOffer = await ProductOffer.find().lean();
+      let categoryOffers = await CategoryOffer.find().lean();
       
       res.render('shop/home', {
         tittle: 'GadgetStore | Home',
         newProducts,
         products,
         user,
+        productOffer,
+        categoryOffers,
       });
 
     } catch (error) {
@@ -39,7 +44,8 @@ module.exports = {
   userProductsPage: async (req, res, next) => {
     try {
       let user = req.user;  
-      // let userWishlist = await Wishlist.findOne({ user_id: user._id }).populate('items.product_id');
+      let productOffer = await ProductOffer.find().lean();
+      let categoryOffers = await CategoryOffer.find().lean();
       let productName = req.query.productName || "";
       let filterPrice = req.query.priceFilter || 1000000
       let filterCategory = req.query.category || 'All'
@@ -75,6 +81,8 @@ module.exports = {
         filterPrice,
         categorys,
         productName,
+        categoryOffers,
+        productOffer,
         user
       });
 
@@ -89,6 +97,7 @@ module.exports = {
       let productId = req.params.product_id;
       let product = await Product.findById(productId).populate('category');
       let productReviews = await productReview.findOne({ product_id: product._id });
+      let productOffer = await ProductOffer.find().lean();      
       let user = req.user;
 
       res.render('shop/product-details', {
@@ -96,6 +105,7 @@ module.exports = {
         product,
         productReviews,
         user,
+        productOffer,
         message:req.flash()
       });
     } catch (error) {
@@ -396,14 +406,42 @@ module.exports = {
   userCartPage: async (req, res, next) => {
     try {
       let user = req.user;
-      let userCart = await Cart.findOne({ user_id: user._id }).populate('items.product');
+      let userCart = await Cart.findOne({ user_id: user._id }).populate({
+        path: 'items.product',
+        model: 'product',
+        populate: {
+          path: 'category',
+          model:'category'
+        }
+      })
       let coupons = await Coupon.find().lean();
+      let productOffer = await ProductOffer.find().lean();
+      let categoryOffer = await CategoryOffer.find().lean();
       let totalPrice = 0;
       let discountPrice = 0;
+      
+      // checking product offer and adding to total price
       if (userCart) {
-        userCart.items.forEach(item => {
-          totalPrice += item.product.price * item.quantity;
-        });
+        for (const item of userCart.items) {
+          if (item.product.haveOffer) {
+            productOffer.forEach((offer) => {
+              if (item.product._id.toString() == offer.product_id) {
+                totalPrice += offer.offerPrice * item.quantity;
+              }
+            });
+
+          } else if (item.product.category.haveOffer) {
+            categoryOffer.forEach((offer) => {
+              if (item.product.category._id.toString() == offer.category_id) {
+                let discountPrice = (item.product.price / 100) * offer.discount;
+                totalPrice += (item.product.price - discountPrice) * item.quantity;
+              }
+            });
+          } else {
+            totalPrice += item.product.price * item.quantity;
+          }
+
+        };
 
         if (userCart.discount > 0) {
           discountPrice = (totalPrice / 100) * userCart.discount;
@@ -420,6 +458,8 @@ module.exports = {
         userCart,
         totalPrice,
         coupons,
+        productOffer,
+        categoryOffer,
         discountPrice
       });
     } catch (error) {
@@ -677,17 +717,38 @@ module.exports = {
         return res.redirect('/cart');
       };
 
-      //calculating total price of the product
-      userCart.items.forEach(item => {
-        //for cheking the quantity
+      // --calculating total price of the product--
+      // userCart.items.forEach(async(item) => {
+      //   --for cheking the quantity--
+      //   if (item.quantity < 1) {
+      //     quantityCheck = true;  
+      //   }
+      //   if (item.product.stock < 0) {
+      //     leftStock = true;
+      //   }
+      //   if (item.product.haveOffer) {
+      //     let productOffer = await ProductOffer.findOne({ product_id: item.product._id });
+      //     totalPrice += productOffer.offerPrice * item.quantity;
+      //   } else {
+      //     totalPrice += item.product.price * item.quantity;
+      //   }
+      // });
+      
+      // check the stock,quantity and add product offer to total price
+      for (const item of userCart.items) {
         if (item.quantity < 1) {
-          quantityCheck = true;  
+          quantityCheck = true;
         }
-        if (item.product.stock < 0) {
+        if (item.product.stock <= 0) {
           leftStock = true;
         }
-        totalPrice += item.product.price * item.quantity;
-      });
+        if (item.product.haveOffer) {
+          let productOffer = await ProductOffer.findOne({ product_id: item.product._id });
+          totalPrice += productOffer.offerPrice * item.quantity;
+        } else {
+          totalPrice += item.product.price * item.quantity;
+        }
+      }
 
       //coupon discount to total price
       let discountPrice = 0;
@@ -763,11 +824,24 @@ module.exports = {
     let discountPrice = 0;
 
     //calculating total price and removing the stock from the product data
-    userCart.items.forEach(async (item) => {
+    // userCart.items.forEach(async (item) => {
+    //   let leftStock = item.product.stock - item.quantity;
+    //   totalPrice += item.product.price * item.quantity;
+    //   await Product.updateOne({ _id: item.product._id }, { $set: { stock: leftStock } });
+    // });
+
+    //total price with offer
+    for (const item of userCart.items) {
+      if (item.product.haveOffer) {
+        let productOffer = await ProductOffer.findOne({ product_id: item.product._id });
+        totalPrice += productOffer.offerPrice * item.quantity;
+      } else {
+        totalPrice += item.product.price * item.quantity;
+      }
       let leftStock = item.product.stock - item.quantity;
-      totalPrice += item.product.price * item.quantity;
       await Product.updateOne({ _id: item.product._id }, { $set: { stock: leftStock } });
-    });
+    }
+
 
     //coupon discount to total price
     if (userCart.discount > 0) {

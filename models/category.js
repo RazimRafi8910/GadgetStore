@@ -4,6 +4,11 @@ let categoryShcema = mongoose.Schema({
     categoryName: {
         type: String,
         required: true
+    },
+    haveOffer: {
+        type: Boolean,
+        required: true,
+        default: false
     }
 });
 

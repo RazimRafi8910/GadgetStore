@@ -11,6 +11,7 @@ const uuidv4 = require("../config/uuidGenerator");
 const PaymentRecipt = require("../models/paymentRecipt");
 const Address = require("../models/address");
 const ProductOffer = require("../models/productOffer");
+const CategoryOffer = require("../models/categoryOffer");
 
 module.exports = {
 
@@ -737,10 +738,12 @@ module.exports = {
   offerPage: async (req, res, next) => {
     try {
       let productOffers = await ProductOffer.find().populate('product_id');
+      let categoryOffers = await CategoryOffer.find().populate('category_id');
       res.render('admin/offer', {
         tittle: 'GadgetStore | Offer',
+        productOffers,
+        categoryOffers,
         message: req.flash(),
-        productOffers
       }); 
     } catch (error) {
       next(error);
@@ -763,10 +766,13 @@ module.exports = {
   addProductOffer: async (req, res, next) => {
     try {
       let { product, discount, expiryDate } = req.body;
-      await Product.updateOne({ _id: product }, { $set: { haveOffer: true } });
+      let offerProduct = await Product.findOneAndUpdate({ _id: product }, { $set: { haveOffer: true } });
+      let discountPrice = (offerProduct.price / 100) * discount;
+      let offerPrice = offerProduct.price - discountPrice;
       let productOffer = await ProductOffer.create({
         product_id: product,
         discount,
+        offerPrice,
         expiryDate
       });
 
@@ -785,6 +791,51 @@ module.exports = {
       if (product) {
         res.status(200).json({ success: true });
       }
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  categoryOfferAddPage: async (req, res, next) => {
+    try {
+      let categorys = await Category.find().lean();
+      res.render('admin/add-category-offer', {
+        tittle: 'GadgetStore | Offer Category',
+        categorys,
+        message:req.flash(),
+      })
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  addCategoryOffer: async (req, res, next) => {
+    try {
+      let { category, discount, expiryDate } = req.body;
+      await Category.updateOne({ _id: category }, { $set: { haveOffer: true } });
+      let categoryOffer = await CategoryOffer.create({
+        category_id: category,
+        discount,
+        expiryDate,
+      });
+
+      if (categoryOffer) {
+        res.redirect('/admin/offers')
+      }
+
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  categoryOfferDelete: async (req, res, next) => {
+    try {
+      let offerId = req.params.offer_id;
+      let categoryOffer = await CategoryOffer.findOneAndDelete({ _id: offerId });
+      let category = await Category.findOneAndUpdate({ _id: categoryOffer.category_id }, { $set: { haveOffer: false } });
+      
+      if (category) { res.status(200).json({ success: true }) };
+       
     } catch (error) {
       next(error);
     }

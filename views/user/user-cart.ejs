@@ -49,7 +49,21 @@
                       <div class="col-lg-2 col-md-3">
                         <div class="card-body text-center">
                             <h6 class="card-subtitle mb-2 text-muted">Price</h6>
-                          <h5 class="card-title"><%= cart.product.price %></h5>
+                            <% if(cart.product.haveOffer) {%>
+                              <% productOffer.forEach(function(offer){ %>
+                                <% if(offer.product_id.toString() == cart.product._id) {%>                           
+                                  <h5 class="card-title"><%= offer.offerPrice %></h5>
+                                <% }}) %>
+                            <% } else if(cart.product.category.haveOffer) { %>
+                                  <% for(const offer of categoryOffer) {%>
+                                    <% if(offer.category_id.toString() == cart.product.category._id) {%>
+                                      <% let discountPrice = (cart.product.price / 100) * offer.discount; %>
+                                      <h5 class="card-title"><%= cart.product.price - discountPrice %></h5>
+                                      <% } %>
+                                  <% } %>
+                            <% } else { %>
+                                    <h5 class="card-title"><%= cart.product.price %></h5>
+                            <% } %>                          
                         </div>
                       </div>
                       <div class="col-lg-2 col-md-2">
@@ -66,7 +80,22 @@
                       <div class="col-lg-2 col-md-2">
                         <div class="card-body text-center">
                             <h6 class="card-subtitle mb-2 text-muted">Total Price</h6>
-                          <h5 class="card-title"><%= cart.product.price * cart.quantity %></h5>
+                            <% if(cart.product.haveOffer) {%>
+                              <% productOffer.forEach(function(offer){ %>
+                                <% if(offer.product_id.toString() == cart.product._id) {%>
+                                  <h5 class="card-title"><%= offer.offerPrice * cart.quantity %></h5>
+                              <% }}) %>
+                            <% } else if(cart.product.category.haveOffer) { %>
+                              <% for(const offer of categoryOffer) {%>
+                                <% if(offer.category_id.toString() == cart.product.category._id) {%>
+                                  <% let discountPrice = (cart.product.price / 100) * offer.discount; %>
+                                  <% let total = (cart.product.price - discountPrice) * cart.quantity  %>
+                                  <h5 class="card-title"><%= total %></h5>
+                                  <% } %>
+                              <% } %>
+                            <% } else { %>
+                              <h5 class="card-title"><%= cart.product.price * cart.quantity %></h5>
+                              <% } %>
                         </div>
                       </div>
                     </div>

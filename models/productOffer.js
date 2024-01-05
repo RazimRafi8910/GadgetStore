@@ -15,6 +15,10 @@ let productOfferSchema = mongoose.Schema({
         required: true,
         default: Date.now,
     },
+    offerPrice: {
+        type: Number,
+        required: true,
+    },
     expiryDate: {
         type: Date,
         required: true,

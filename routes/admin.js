@@ -55,6 +55,9 @@ router.get('/offers', isAdmin, adminController.offerPage);
 router.get('/offer/product/add', isAdmin, adminController.productOfferAddPage);
 router.post('/offer/product/add', isAdmin, adminController.addProductOffer);
 router.delete('/offer/product/:offer_id/delete', isAdmin, adminController.deleteProductOffer);
+router.get('/offer/category/add', isAdmin, adminController.categoryOfferAddPage);
+router.post('/offer/category/add', isAdmin, adminController.addCategoryOffer);
+router.delete('/offer/category/:offer_id/delete', isAdmin, adminController.categoryOfferDelete);
 
 
 module.exports = router;
