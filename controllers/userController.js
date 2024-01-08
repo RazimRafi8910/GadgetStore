@@ -16,6 +16,8 @@ const Wishlist = require('../models/wishlist');
 const PaymentRecipt = require('../models/paymentRecipt');
 const ProductOffer = require('../models/productOffer');
 const CategoryOffer = require('../models/categoryOffer');
+const { uuidv4, invoiceIdGenrator } = require('../config/uuidGenerator');
+const { generateInoviovePDF } = require('../config/pdfInvoice');
 
 module.exports = {
   
@@ -97,7 +99,8 @@ module.exports = {
       let productId = req.params.product_id;
       let product = await Product.findById(productId).populate('category');
       let productReviews = await productReview.findOne({ product_id: product._id });
-      let productOffer = await ProductOffer.find().lean();      
+      let productOffer = await ProductOffer.findOne({ product_id: productId }).lean();
+      let categoryOffer = await CategoryOffer.findOne({ category_id: product.category._id });
       let user = req.user;
 
       res.render('shop/product-details', {
@@ -105,6 +108,7 @@ module.exports = {
         product,
         productReviews,
         user,
+        categoryOffer,
         productOffer,
         message:req.flash()
       });
@@ -290,6 +294,28 @@ module.exports = {
     }
   },
 
+  userReferrals: async (req, res, next) => {
+    try {
+      let user = req.user;
+      let link
+      if (user.referralLink == 'null') {
+        let id = uuidv4();
+        link = id + user.username;
+        await User.updateOne({ _id: user._id }, { $set: { referralLink: link } });
+      } else {
+        link = user.referralLink;
+      }
+
+      res.render('user/referal', {
+        tittle: 'GadgetStore | Referals',
+        user,
+        link
+      })
+    } catch (error) {
+      next(error);
+    }
+  },
+
   addAddressPage: (req, res) => {
     let user = req.user;
     res.render('user/new-address', {
@@ -445,7 +471,7 @@ module.exports = {
 
         if (userCart.discount > 0) {
           discountPrice = (totalPrice / 100) * userCart.discount;
-          discountPrice = discountPrice.toFixed(2);
+          discountPrice = discountPrice;
           totalPrice = totalPrice - discountPrice;
         }
       };
@@ -706,48 +732,52 @@ module.exports = {
     try {
       let cartId = req.params.cart_id;
       let user = req.user;
-      let userCart = await Cart.findOne({ _id: cartId }).populate('items.product').populate('coupon');
+      let userCart = await Cart.findOne({ _id: cartId }).populate('coupon').populate({
+        path: 'items.product',
+        model: 'product',
+        populate: {
+          path: 'category',
+          model: 'category'
+        }
+      });
       let userAddress = await Address.find({ user_id: user._id });
       let userWallet = await Wallet.findOne({ user_id: user._id });
+      let productOffers = await ProductOffer.find();
+      let categoryOffers = await CategoryOffer.find();
       let totalPrice = 0;
+      let offerDiscount = 0;
       let quantityCheck = false;
       let leftStock = false;  //for to check the stock of the product
 
       if (!userCart) {
         return res.redirect('/cart');
       };
-
-      // --calculating total price of the product--
-      // userCart.items.forEach(async(item) => {
-      //   --for cheking the quantity--
-      //   if (item.quantity < 1) {
-      //     quantityCheck = true;  
-      //   }
-      //   if (item.product.stock < 0) {
-      //     leftStock = true;
-      //   }
-      //   if (item.product.haveOffer) {
-      //     let productOffer = await ProductOffer.findOne({ product_id: item.product._id });
-      //     totalPrice += productOffer.offerPrice * item.quantity;
-      //   } else {
-      //     totalPrice += item.product.price * item.quantity;
-      //   }
-      // });
       
       // check the stock,quantity and add product offer to total price
       for (const item of userCart.items) {
         if (item.quantity < 1) {
           quantityCheck = true;
         }
+
         if (item.product.stock <= 0) {
           leftStock = true;
         }
+        // total price with product offer
         if (item.product.haveOffer) {
           let productOffer = await ProductOffer.findOne({ product_id: item.product._id });
           totalPrice += productOffer.offerPrice * item.quantity;
+          offerDiscount += item.product.price - productOffer.offerPrice;
+
+        } else if (item.product.category.haveOffer) {
+          // total price with category offer
+          let categoryOffer = await CategoryOffer.findOne({ category_id: item.product.category._id });
+          let discountPrice = (item.product.price / 100) * categoryOffer.discount;
+          totalPrice += (item.product.price - discountPrice) * item.quantity;
+          offerDiscount += discountPrice;
         } else {
           totalPrice += item.product.price * item.quantity;
         }
+        
       }
 
       //coupon discount to total price
@@ -760,7 +790,7 @@ module.exports = {
           return res.redirect('/cart');
         }
         discountPrice = (totalPrice / 100) * userCart.discount;
-        discountPrice = discountPrice.toFixed(2);
+        discountPrice = discountPrice
         totalPrice = totalPrice - discountPrice;
       }
 
@@ -780,8 +810,11 @@ module.exports = {
         userCart,
         user,
         totalPrice,
+        categoryOffers,
+        productOffers,
         userWallet,
         discountPrice,
+        offerDiscount,        
         message:req.flash(),
       })
     } catch (error) {
@@ -815,7 +848,14 @@ module.exports = {
     let user = req.user;
     let userCartId = req.params.cart_id;
     let { addressId, paymentMethod, walletAmount } = req.body;
-    let userCart = await Cart.findOne({ _id: userCartId }).populate('items.product');
+    let userCart = await Cart.findOne({ _id: userCartId }).populate('items.product').populate({
+      path: 'items.product',
+      model: 'product',
+      populate: {
+        path: 'category',
+        model: 'category'
+      }
+    });
     let userWallet = await Wallet.findOne({ user_id: user._id });
     let coupon = await Coupon.findOne({ _id: userCart.coupon });
     let orderItems = userCart.items;
@@ -830,14 +870,27 @@ module.exports = {
     //   await Product.updateOne({ _id: item.product._id }, { $set: { stock: leftStock } });
     // });
 
-    //total price with offer
+    if (!addressId) {
+      req.flash('error', 'Address not selected');
+      return res.status(200).json({ success: false, payment: false});
+    }
+
+    //calculating total price of the product with offer discount
     for (const item of userCart.items) {
       if (item.product.haveOffer) {
         let productOffer = await ProductOffer.findOne({ product_id: item.product._id });
         totalPrice += productOffer.offerPrice * item.quantity;
+
+      } else if (item.product.category.haveOffer) {
+        //calculating total price product category offer
+        let categoryOffer = await CategoryOffer.findOne({ category_id: item.product.category._id });
+        let discountPrice = (item.product.price / 100) * categoryOffer.discount;
+        totalPrice += (item.product.price - discountPrice) * item.quantity;
+
       } else {
         totalPrice += item.product.price * item.quantity;
       }
+
       let leftStock = item.product.stock - item.quantity;
       await Product.updateOne({ _id: item.product._id }, { $set: { stock: leftStock } });
     }
@@ -872,8 +925,10 @@ module.exports = {
     };
 
     //order creating
+    let invoiceId = invoiceIdGenrator();
     let order = await Order.create({
       user_id: user._id,
+      invoiceId,
       orderAddress: addressId,
       items: orderItems,
       paymentMethod,
@@ -895,7 +950,34 @@ module.exports = {
       //updating user wallet balance
     let remainingBalance = userWallet.balance - walletAmount;
     await Wallet.updateOne({ _id: userWallet._id }, { $set: { balance: remainingBalance }, $push: { transactions } }, { new: true });
-    } 
+    };
+
+    //check the user referral and updating referred user 
+    if (user.referralId !== 'null' ) {
+      let referredUser = await User.findOne({ referralLink: user.referralId });
+      let transactions = [{
+        order_id: order._id,
+        referral: user.username,
+        method: 'referral',
+        amount: 100
+      }];
+
+      let referredUserWallet = await Wallet.findOne({ user_id: referredUser._id });
+
+      if (!referredUserWallet) {
+         referredUserWallet = await Wallet.create({
+          user_id: order.user_id,
+          balance: 100,
+          transactions
+        });
+
+      } else {
+        let remainingBalance = referredUserWallet.balance + 100;
+        let result = await Wallet.findOneAndUpdate({ user_id: referredUser._id }, { $set: { balance: remainingBalance }, $push: { transactions } });
+      };
+
+      await User.updateOne({ _id: user._id }, { $set: { referralId: 'null' } });
+    }
 
 
       //razorpay online paymanet
@@ -1029,6 +1111,19 @@ module.exports = {
       }
 
       res.redirect('/')
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  orderInvoice: async (req, res, next) => {
+    try {
+      let user = req.user;
+      let orderId = req.params.order_id;
+      let userOrder = await Order.findOne({ _id: orderId }).populate('orderAddress').populate('items.product');
+      
+      res.status(200).json({user, userOrder});
+      
     } catch (error) {
       next(error);
     }

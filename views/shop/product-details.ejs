@@ -73,7 +73,16 @@
                     <span class="text-muted"> <%= product.category.categoryName %></span>
                     <% } %>
                   <div class="mb-3">
-                    <span class="h5">Rs <%= product.price %>/-</span>
+                    <% if(product.haveOffer) {%>
+                     <p class="m-0 text-muted"><span class="h6 text-decoration-line-through">Rs <%= product.price %>/-</span></p> 
+                    <span class="h5">Rs <%= productOffer.offerPrice %>/-</span>
+                    <span class="h5 text-success"> %<%= productOffer.discount %>off</span>
+                    <% } else if(categoryOffer) {%>
+                      <p class="m-0 text-muted"><span class="h6 text-decoration-line-through">Rs <%= product.price %>/-</span></p>
+                      <% let discountPrice = (product.price / 100) * categoryOffer.discount %>
+                      <span class="h5">Rs <%= product.price - discountPrice %>/-</span>
+                      <span class="h5 text-success"> %<%= categoryOffer.discount %>off</span>
+                      <% } %>
                   </div>
                   <p>
                     <%= product.description %>

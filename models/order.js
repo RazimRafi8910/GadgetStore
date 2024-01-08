@@ -6,6 +6,10 @@ let orderShcema = mongoose.Schema({
         required: true,
         ref: 'user'
     },
+    invoiceId: {
+        type: String,
+        required: true
+    },
     orderAddress: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
@@ -40,7 +44,7 @@ let orderShcema = mongoose.Schema({
         default: Date.now
     },
     deleveredDate: {
-        type:Date
+        type: Date
     }
 });
 

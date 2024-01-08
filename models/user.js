@@ -31,7 +31,15 @@ let userSchema = mongoose.Schema({
     usedCoupons: [{
             type: String,
             required: true
-    }]
+    }],
+    referralId: {
+        type: String,
+        default:'null'
+    },
+    referralLink: {
+        type: String,
+        default:'null'
+    }
 });
 
 let User = mongoose.model('user',userSchema)

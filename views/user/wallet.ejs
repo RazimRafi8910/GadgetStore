@@ -28,16 +28,26 @@
                             <% if(list.method === 'Credit') {%>
                                 <p class="card-text text-success m-0 mb- fs-5"><%= list.method %></p>
                                 <h4 class="card-title">Amount : <span class="text-success m-0 ">+<%= list.amount %> </span></h4>
+                                <% } else if(list.method === 'referral') {%>
+                                  <p class="card-text fw-bold text-success m-0 mb- fs-5">Referral</p>
+                                  <h4 class="card-title">Amount : <span class="text-success m-0 ">+<%= list.amount %> </span></h4>
                                 <% } else { %>
                                     <p class="card-text text-danger m-0 mb- fs-5"><%= list.method %></p>
                                     <h4 class="card-title">Amount : <span class="text-danger m-0 ">+<%= list.amount %> </span></h4>
                                     <% } %>
                           
-                          <h5 class="card-subtitle mb-2 ">Order Id : <%= list.order_id %></h5>
+                            <% if(list.referral) {%>
+                              <h5 class="card-subtitle mb-2 ">Referred User: <%= list.referral %></h5>
+                              <% } else { %>
+                                <h5 class="card-subtitle mb-2 ">Order Id : <%= list.order_id %></h5>
+                                <% } %>
+                                
                           <h6 class="card-subtitle mb-2 ">Date : <%= list.date.toLocaleString('default',{day: 'numeric', month: 'numeric', year: 'numeric'}) %></h6>
                           
                          <div class="d-flex justify-content-end">
+                          <% if(!list.referral) {%>
                             <a href="/order/<%= list.order_id %>" class="btn btn-secondary">View Order</a>
+                            <% } %> 
                          </div>  
                         </div>
                       </div>

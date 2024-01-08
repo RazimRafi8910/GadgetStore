@@ -1,0 +1,65 @@
+<%- include('../partials/header.ejs') %>
+<%- include('../partials/user-navbar.ejs') %>
+
+<div class="container">
+    <div class="row mt-3">
+        <h1 class="mb-0">Referrals</h1>
+        <hr class="mt-0">
+    </div>
+
+    <div class="row d-flex justify-content-center">
+        <div class="col-lg-10">
+        <div class="card px-0">
+            <h5 class="card-header"> Referral link</h5>
+            <div class="card-body">
+              <h5 class="card-title">Link</h5>
+                <hr class="mt-0">
+                <p class="card-text">Send this link to your friend to get reward</p>
+              <div class="row g-3 align-items-center">
+                <div class="col-auto">
+                  <label for="idBox" class="col-form-label">Link</label>
+                </div>
+                <div class="col-lg-4">
+                  <input type="text"  value="http://localhost:3001/signup?ref=<%= link %>" id="idBox" class="form-control text-primary" readonly>
+                </div>
+                <div class="col-auto">
+                  <button type="button" onclick="copyToClipboard()" id="copyButton" class="btn btn-secondary">Copy</button><i id="icon" class="ms-2 text-success fs-5 d-none fa-solid fa-check"></i>
+                </div>
+              </div>
+
+              <div class="row mt-4">
+                <h5 class="card-title">How to use</h5>
+                <hr>
+                <div class="ms-4">
+                  <ol class="list-group list-group-flush ">
+                    <li class=""><p class=" mb-2"> Send this link to your friend and ask them to sign up using the provided link.</p></li>
+                    <li class=""><p class=" mb-2"> After signing up, your friend needs to place an order for any product.</p></li>
+                    <li class=""><p class=" mb-2"> Once the order is completed, you will receive your reward.</p></li>
+                    <li class=""><p class=" mb-2"> The reward amount will be credited to your wallet.</p></li>
+                    <!-- <li class="">And a fifth one</li> -->
+                  </ol>
+                  <p>Reward : Rs100</p>
+                  <p> <span class="fw-bold">Note:</span> The reward will be credited only to your wallet.</p>
+                </div>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+    </div>
+
+</div>
+<%- include('../partials/footer.ejs') %>
+
+<script>
+    let copyButton = document.getElementById('copyButton');
+    let idBox = document.getElementById('idBox')
+
+   function copyToClipboard(){
+    let icon = document.getElementById('icon')  
+    navigator.clipboard.writeText(idBox.value);
+    copyButton.innerText = 'Copied'
+    icon.classList.remove('d-none')
+   }
+
+</script>

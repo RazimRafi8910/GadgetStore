@@ -130,12 +130,12 @@
               </div>
               <div class="d-flex justify-content-between">
                 <p class="m-2">Discount:</p>
-                <p class="m-2 text-danger">- Rs <%= discountPrice %></p>
+                <p class="m-2 text-danger">- Rs <%= discountPrice.toFixed(2) %></p>
               </div>
               <hr />
               <div class="d-flex justify-content-between">
                 <p class="m-2">Total Price:</p>
-                <p class="m-2">+ Rs <%= totalPrice %></p>
+                <p class="m-2">+ Rs <%= totalPrice.toFixed(2) %></p>
               </div>
             
             <div class="card-footer px-0 py-0">

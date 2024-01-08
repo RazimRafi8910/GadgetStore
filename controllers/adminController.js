@@ -7,7 +7,7 @@ const { productInputValidation, couponValidation } = require("../config/inputVal
 const OrderReturn = require("../models/orderReturn");
 const Wallet = require("../models/wallet");
 const Coupon = require("../models/coupon");
-const uuidv4 = require("../config/uuidGenerator");
+const { uuidv4, invoiceIdGenrator } = require("../config/uuidGenerator");
 const PaymentRecipt = require("../models/paymentRecipt");
 const Address = require("../models/address");
 const ProductOffer = require("../models/productOffer");
@@ -659,6 +659,13 @@ module.exports = {
       if (!result.validation) {
         req.flash(`${result.input}`, `Invalid ${result.input}`);
         return res.redirect(`/admin/coupon/add`);
+      }
+
+      let isExistCoupon = await Coupon.findOne({ couponName: new RegExp("^" + couponName + "$", 'i') });
+
+      if (isExistCoupon) {
+        req.flash('error', 'Coupon already exists');
+        return res.redirect('/admin/coupons');
       }
 
       let code = uuidv4() //generate coupon code

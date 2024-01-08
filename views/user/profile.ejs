@@ -39,6 +39,7 @@
                         <% if(userWallet) { %>
                         <a href="/wallet" class="btn btn-outline-primary fw-bold px-4 ">Wallet</a>
                         <% } %>
+                        <a href="/referrals" class="btn btn-outline-primary fw-bold px-4 ">Referral</a>
                     </div>
                   </div>
 
@@ -149,7 +150,7 @@
                       <div class="col-lg-4 col-md-3">
                         <div class="card-body">
                             
-                          <h5 class="card-title fw-bold text-start">Id: <%= order._id %></h5>
+                          <h5 class="card-title fw-bold text-start">Id: <%= order.invoiceId %></h5>
                         </div>
                       </div>
                       <div class="col-lg-2 col-md-3">
@@ -181,7 +182,7 @@
                       <div class="col-lg-2 col-md-2">
                         <div class="card-body text-center">
                             
-                          <h5 class="card-title">Rs <%= order.totalPrice %></h5>
+                          <h5 class="card-title">Rs <%= order.totalPrice.toFixed(2) %></h5>
                         </div>
                       </div>
                       <div class="col-lg-2 col-md-2">
@@ -236,14 +237,14 @@
                     <h5 class="card-title"><%= item.description %></h5>
                     <p class="card-text">Code : <span class="fw-bold"><%= item.code %></span></p>
                      <% if(user.usedCoupons) {%>
-                      <% user.usedCoupons.forEach(function(coupon){ %>
+                      <% for(const coupon of user.usedCoupons) {%>
                         <% if(coupon == item.code) {%>
-                    <p class="card-text fw-bold text-muted m-0">Used</p>
-                    <% } else { %>                     
-                      <p class="card-text text-success m-0">Not Used</p>
-                    <% } })} else {%>                      
-                      <p class="card-text text-success m-0">Not Used</p>
+                          <p class="card-text fw-bold text-muted m-0">Used</p>
+                        <% } %>                        
                       <% } %>
+                      
+                          <% } %>
+                      
                           <small>Expiry Date : <%= item.expriyDate.toLocaleString('default',{day: 'numeric', month: 'numeric', year: 'numeric'}) %></small>
                   </div>
                 </div>

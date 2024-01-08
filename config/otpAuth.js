@@ -73,4 +73,5 @@ async function verifiyOTP(OTP, email) {
   }
 }
 
+
 module.exports = { GenerateOTP, verifiyOTP };

@@ -8,15 +8,17 @@ dotenv.config();
 module.exports = {
   //User signup page
   signupPage: (req, res) => {
+    let ref = req.query.ref;
     res.render("user/signup", {
       tittle: 'GadgetStore | Signup',
-      message: req.flash()
+      message: req.flash(),
+      ref
     });
   },
   //User signup 
   userSignup: async (req, res, next) => {
     try {
-      const { username, email, number, password } = req.body;
+      const { username, email, ref, number, password } = req.body;
       
       //checks if user exsits
       let existUser = await User.findOne({ email });
@@ -39,14 +41,21 @@ module.exports = {
           
       //register user in database
       let hashPassword = await bcrypt.hash(password, 6);
-      let user = await User.create({
+      let userDetails = {
         username,
         email,
         number,
         password: hashPassword,
         accountStatus: "unverified",
         role: "user"
-      });
+      };
+
+      //referre id
+      if (ref) {
+        userDetails.referralId = ref;
+      };
+
+      let user = await User.create(userDetails);
 
       //generate the OTP and send to the user
       GenerateOTP(email);

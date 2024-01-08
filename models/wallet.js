@@ -14,7 +14,7 @@ let walletSchema = mongoose.Schema({
         order_id: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'order',
-            required: true
+            required:true
         },
         method: {
             type: String,
@@ -28,6 +28,9 @@ let walletSchema = mongoose.Schema({
             type: Date,
             required: true,
             default:Date.now
+        },
+        referral: {
+            type: String,  
         },
     }]
 });

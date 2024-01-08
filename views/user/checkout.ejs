@@ -107,16 +107,17 @@
                   </div>
                 <div class="d-flex justify-content-between">
                   <p class="mb-2">Total price:</p>
-                  <p class="mb-2">Rs <%= totalPrice %></p>
+                  <p class="mb-2">Rs <%= totalPrice.toFixed(2) %></p>
                 </div>
                 <div class="d-flex justify-content-between">
                   <p class="mb-2">Discount:</p>
-                  <p class="mb-2 text-danger">- Rs <%= discountPrice %></p>
+                  <% let discount = discountPrice + offerDiscount %>
+                  <p class="mb-2 text-danger">- Rs <%= discount.toFixed(2) %></p>
                 </div>
                 <hr />
                 <div class="d-flex justify-content-between">
                   <p class="mb-2">Total price:</p>
-                  <p class="mb-2 fw-bold">Rs <%= totalPrice %></p>
+                  <p class="mb-2 fw-bold">Rs <%= totalPrice.toFixed(2) %></p>
                 </div>
       
                 <hr />
@@ -131,7 +132,25 @@
                         <p class="text-dark fw-bold m-0"><%= cart.product.productName %></p>
                     </a>
                     <div class="price text-muted">quantity: <%= cart.quantity %></div>
-                    <div class="price text-muted">Total: <%= cart.product.price * cart.quantity %></div>
+                    <% if(cart.product.haveOffer) {%>
+                      <% productOffers.forEach(function(offer){ %>
+                        <% if(offer.product_id.toString() == cart.product._id) {%>
+                          <div class="price ">Total: <%= offer.offerPrice * cart.quantity %> <span class="text-success">%<%= offer.discount %>off</span></div>
+                        <% } %>
+                      <% }) %>
+                    <% } else if(!cart.product.haveOffer && cart.product.category.haveOffer ) {%>
+                      <% for(const offer of categoryOffers) {%>
+                        <% if(offer.category_id.toString() == cart.product.category._id) {%>
+                          <% let discountPrice = (cart.product.price/100) * offer.discount  %>
+                          <div class="price ">Total: <%= (cart.product.price-discountPrice) * cart.quantity %> <span class="text-success">%<%= offer.discount %>off</span></div>
+                          <!-- <p class="card-text text-decoration-line-through m-0">&#8377 <%= cart.product.price %></p> -->
+                          <!-- <p class="card-text fw-bold m-0"><span class="text-success">%<%= offer.discount %> Offer</span> &#8377 <%= cart.product.price-discountPrice  %></p> -->
+                        <% } %>
+                      <% } %>
+  
+                    <% } else {%>
+                      <p class="card-text  m-0">&#8377 <%= cart.product.price * cart.quantity %></p>
+                      <% } %>
                   </div>
                 </div>
                 <% }) %>

@@ -54,7 +54,7 @@
             
             <div class="mx-2 mt-3">
                 <div class="d-flex ">
-                    <h5 class="mt-1 ">invoice Id : </h5><p class="my-0 fs-5"> <%= order._id.toString()  %></p>
+                    <h5 class="mt-1 ">Invoice Id : </h5><p class="my-0 fs-5"> <%= order.invoiceId  %></p>
                 </div>
                 
                 <div class="d-flex ">
@@ -127,7 +127,7 @@
           </div>
           <div class="d-flex justify-content-between">
             <p class="m-2">Total Price:</p>
-            <p class="m-2 text-dark">+ Rs <%= order.totalPrice %></p>
+            <p class="m-2 text-dark">+ Rs <%= order.totalPrice.toFixed(2) %></p>
           </div>
           <div class="d-flex justify-content-between">
             <p class="m-2">Discound</p>
@@ -146,7 +146,7 @@
           <hr />
           <div class="d-flex justify-content-between">
             <p class="m-2">Total Price:</p>
-            <p class="m-2">+ Rs <%= order.totalPrice %> </p>
+            <p class="m-2">+ Rs <%= order.totalPrice.toFixed(2) %> </p>
           </div>
         
         <!-- <div class="card-footer px-0 py-0">

@@ -41,6 +41,7 @@ router.get('/order/:order_id/success', authenticateUser, userController.orderSuc
 router.post('/order/:cart_id/create', authenticateUser, userController.createOrder);
 router.put('/order/:order_id/cancel', authenticateUser, userController.cancelOrder);
 router.post('/order/:order_id/return', authenticateUser, userController.returnOrder);
+router.get('/order/:order_id/invoice', authenticateUser, userController.orderInvoice);
 
 //profile
 router.get('/profile',isUserBlocked, authenticateUser, userController.userProfile);
@@ -49,6 +50,9 @@ router.get('/profile/edit', authenticateUser, userController.userProfileEditPage
 router.put('/profile/edit', authenticateUser, userController.userProfileEdit);
 router.put('/profile/password/edit', authenticateUser, userController.changePassword);
 router.get('/wallet', authenticateUser, userController.userWalletPage);
+
+//referral
+router.get('/referrals', isUserBlocked, authenticateUser, userController.userReferrals);
 
 //user address
 router.get('/address/:user_id/add',isUserBlocked, authenticateUser,userController.addAddressPage);

@@ -30,7 +30,11 @@
                     <div class="form-floating mb-3">
                         <input type="email" class="form-control" value="<%= user.email %>" id="userEmail" name="email" required>
                         <label for="floatingInput">Email</label>
+                        <% if(user.accountStatus !== 'verified' ) {%>
+                            <p id="indicator" class="text-danger ms-2">Not verified</p>
+                            <% } else { %>
                             <p id="indicator" class="text-success ms-2">verified</p>
+                            <% } %>
                       </div>
                 </div>
                 <div class="col-md-4">
