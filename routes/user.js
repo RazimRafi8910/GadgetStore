@@ -33,9 +33,10 @@ router.post('/cart/:product_id/add', authenticateUser, userController.addToCart)
 router.put('/cart/:product_id/change', authenticateUser, userController.cartItemChangeQuantity);
 router.delete('/cart/:product_id/delete', authenticateUser, userController.cartItemDelete);
 router.post('/cart/:cart_id/coupon/add', authenticateUser, userController.couponAddToCart);
+router.delete('/cart/:cart_id/coupon/delete', authenticateUser, userController.deleteCartCoupon);
 
 //order 
-router.get('/order/:order_id', authenticateUser, userController.orderPage);
+router.get('/order/:order_id', authenticateUser, isUserBlocked, userController.orderPage);
 router.post('/order/:order_id/verfiy', userController.orderPaymentVerify);
 router.get('/order/:order_id/success', authenticateUser, userController.orderSuccessPage);
 router.post('/order/:cart_id/create', authenticateUser, userController.createOrder);

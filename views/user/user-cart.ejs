@@ -116,10 +116,14 @@
                 <p class="m-2"><%= userCart.items.length %></p>
               </div>
               <div class="d-flex justify-content-between">
-                <p class="m-2">Coupons</p>
                 <% if(userCart.coupon) {%>
-                  <p class="text-success m-0">Coupon Added</p>
+                  <p class="m-2">Coupon Added</p>
+                  <div class="d-flex">
+                    <p class="text-success m-0"><%= userCart.coupon.couponName %></p>
+                    <p class="m-0 text-danger" onclick="removeCoupon('<%= userCart._id %>')"><small class="mx-1"><i class="fa-solid fa-trash"></i></small></p>
+                  </div>
                   <% } else { %>
+                    <p class="m-2">Coupons</p>
                     <div class="text-end">
                       <a  data-bs-toggle="modal" data-bs-target="#addCoupon" class="m-2 text-dark ">Add coupon</a>
                       <% if(message.couponError) {%>
@@ -254,6 +258,22 @@ if (!sessionStorage.getItem("modal2")) {
         } catch (error) {
             console.log(error);
         }
+    }
+
+    async function removeCoupon(cartId){
+      try {
+        let responce = await fetch(`/cart/${cartId}/coupon/delete`,{
+          method:'DELETE',
+          headers:{
+            'Content-Type': 'application/json',
+          }
+        });
+        if(responce.ok){
+          window.location.reload();
+        }
+      } catch (error) {
+        console.log(error);
+      }
     }
 
 </script>

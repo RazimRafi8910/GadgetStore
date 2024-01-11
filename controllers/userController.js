@@ -432,7 +432,7 @@ module.exports = {
   userCartPage: async (req, res, next) => {
     try {
       let user = req.user;
-      let userCart = await Cart.findOne({ user_id: user._id }).populate({
+      let userCart = await Cart.findOne({ user_id: user._id }).populate('coupon').populate({
         path: 'items.product',
         model: 'product',
         populate: {
@@ -728,6 +728,19 @@ module.exports = {
     }
   },
 
+  deleteCartCoupon: async (req, res, next) => {
+    try {
+      let cartId = req.params.cart_id;
+      let userCart = await Cart.findOne({ _id: cartId });
+      let result = await Cart.findOneAndUpdate({ _id: cartId }, { $set: { discount: 0 } ,  $unset: { coupon: userCart.coupon } });
+      if (result) {
+        res.status(200).json({ success: true });
+      }
+    } catch (error) {
+      next(error);
+    }
+  },
+
   cartCheckoutPage: async (req, res, next) => {
     try {
       let cartId = req.params.cart_id;
@@ -910,13 +923,13 @@ module.exports = {
       }
     };
     //checks the wallet balance and input amount
-    if (walletAmount) {
-      if (walletAmount > userWallet.balance || walletAmount > totalPrice){
+    if ( walletAmount ) {
+      if ( walletAmount > userWallet.balance || walletAmount > totalPrice ){
         req.flash('error', 'The wallet balance exceeds the expected amount');
         return res.status(200).json({ success: false });
         
       } else {
-        if (totalPrice == walletAmount) {
+        if ( totalPrice == walletAmount ) {
           paymentMethod = 'PaidOnWallet';
         } else {
           totalPrice = totalPrice - walletAmount;

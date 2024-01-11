@@ -28,7 +28,7 @@
             </a>
               </div>
 
-              <div class="col-lg-2 col-md-3">
+              <div class="col-lg-3 col-md-3">
                 <div class="card-body">                 
                   <h5 class="card-title fw-bold text-start"><%= offer.product_id.productName %></h5>
                 </div>
@@ -63,9 +63,9 @@
                 </div>
               </div>
 
-              <div class="col-lg-2 col-md-3">
+              <div class="col-lg-1 col-md-3">
                 <button class="btn btn-danger fw-bold" data-bs-toggle="modal" data-bs-target="#deleteProductOffer" onclick="getOfferId('<%= offer._id %>')" type="button"><i class="fa-solid fa-trash"></i></button>
-                    <a href="/admin/coupon/edit"><button class="btn btn-outline-dark fw-bold" type="button"><i class="fa-solid fa-pen-to-square"></i></button></a>
+                    <!-- <a href="/admin/coupon/edit"><button class="btn btn-outline-dark fw-bold" type="button"><i class="fa-solid fa-pen-to-square"></i></button></a> -->
               </div>
 
             </div>
@@ -86,9 +86,13 @@
 <div class="row d-flex  mx-3">
 <% if(categoryOffers) {%>
   <% categoryOffers.forEach(function(offer){ %>
-  <div class="col-lg-10">
+
   <div class="card mb-3">
     <div class="row g-0 d-flex align-items-center">
+
+      <div class="col-lg-1 col-md-3">
+
+      </div>
 
       <div class="col-lg-3 col-md-3">
         <div class="card-body">
@@ -111,19 +115,16 @@
         </div>
       </div>
 
-      <div class="col-lg-3 col-md-2">
+      <div class="col-lg-2 col-md-2">
         <div class="card-body text-center">
           <button class="btn btn-danger fw-bold" data-bs-toggle="modal" data-bs-target="#deleteCategoryOffer" onclick="getOfferId('<%= offer._id %>')" type="button"><i class="fa-solid fa-trash"></i></button>
-          <a href="/admin"><button class="btn btn-outline-dark fw-bold" type="button"><i class="fa-solid fa-pen-to-square"></i></button></a>
+          <!-- <a href="/admin"><button class="btn btn-outline-dark fw-bold" type="button"><i class="fa-solid fa-pen-to-square"></i></button></a> -->
         </div>
       </div>
 
     </div>
-  </div>
 <% })} %>
 </div>
-
-
 
 </div>
 
