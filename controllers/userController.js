@@ -17,7 +17,6 @@ const PaymentRecipt = require('../models/paymentRecipt');
 const ProductOffer = require('../models/productOffer');
 const CategoryOffer = require('../models/categoryOffer');
 const { uuidv4, invoiceIdGenrator } = require('../config/uuidGenerator');
-const { generateInoviovePDF } = require('../config/pdfInvoice');
 
 module.exports = {
   

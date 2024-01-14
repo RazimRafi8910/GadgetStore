@@ -12,7 +12,7 @@ const dotenv = require("dotenv")
 const app = express();
 dotenv.config();
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8001;
 
 //view engine
 app.set("view engine", "ejs");
@@ -22,7 +22,14 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
-app.use(session({ secret: process.env.SESSIONKEY, resave: false, saveUninitialized: false, }));
+app.use(session({
+  secret: process.env.SESSIONKEY,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 24 * 365
+  }
+}));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash())
@@ -40,6 +47,7 @@ initializePassport(passport);
 //database connection
 dbConnection();
 
+
 //routers
 app.use("/", userRouter);
 app.use('/admin', adminRouter);
@@ -55,3 +63,4 @@ app.use(errorHandler)
 app.listen(PORT, () => {
   console.log("server is running on " + PORT);
 });
+

@@ -5,10 +5,9 @@ dotenv.config();
 const URI = process.env.URI_ALTAS;
 
 module.exports = function (){
-    mongoose.connect(URI).then(()=>{
+    mongoose.connect(URI).then(() => {
         console.log("database connected")
-    }).catch((err)=>{
+    }).catch((err) => {
         console.log(err)
     })
 }
-
