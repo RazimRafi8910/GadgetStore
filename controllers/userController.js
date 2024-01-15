@@ -985,7 +985,7 @@ module.exports = {
 
       } else {
         let remainingBalance = referredUserWallet.balance + 100;
-        let result = await Wallet.findOneAndUpdate({ user_id: referredUser._id }, { $set: { balance: remainingBalance }, $push: { transactions } });
+        await Wallet.findOneAndUpdate({ user_id: referredUser._id }, { $set: { balance: remainingBalance }, $push: { transactions } });
       };
 
       await User.updateOne({ _id: user._id }, { $set: { referralId: 'null' } });
