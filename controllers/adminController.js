@@ -513,14 +513,14 @@ module.exports = {
     try {
       let filterStatus = req.query.orderStatus || 'All';
       let page = req.query.page || 1;
-      let limit = 6;
+      let limit = 8;
       let skip = (page - 1) * limit;
       let endIndex = page * limit;
       let orders
       if (filterStatus !== 'All') {
-        orders = await Order.find({ orderStatus: filterStatus }).populate('user_id');
+        orders = await Order.find({ orderStatus: filterStatus }).populate('user_id').skip(skip).limit(endIndex);
       } else {
-        orders = await Order.find().populate('user_id').sort({ orderDate: -1 });
+        orders = await Order.find().populate('user_id').sort({ orderDate: -1 }).skip(skip).limit(endIndex);
       };
 
       res.render('admin/orders', {
@@ -628,7 +628,13 @@ module.exports = {
 
   couponsPage: async (req, res, next) => {
     try {
-      let coupons = await Coupon.find();
+      let page = req.query.page || 1;
+      let limit = 6;
+      let skip = (page - 1) * limit;
+      let endIndex = page * limit;
+      
+      let coupons = await Coupon.find().sort({ orderDate: -1 }).skip(skip).limit(endIndex);
+
       res.render('admin/coupons', {
         tittle: 'GadgetStore | Coupons',
         message: req.flash(),

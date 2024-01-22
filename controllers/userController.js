@@ -165,7 +165,8 @@ module.exports = {
       let endIndex = page * limit;
       
       if (filterStatus !== 'All') {
-        userOrders = await Order.find({ $and: [{ user_id: user._id }, { orderStatus: filterStatus }] }).sort({ orderDate: -1 }).skip(skip).limit(endIndex);
+        userOrders = await Order.find({ $and: [{ user_id: user._id }, { orderStatus: filterStatus }] })
+          .sort({ orderDate: -1 }).skip(skip).limit(endIndex);
       } else {
         userOrders = await Order.find({ user_id: user._id }).skip(skip).limit(endIndex).sort({ orderDate: -1 });
       }
