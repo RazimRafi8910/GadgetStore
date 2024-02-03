@@ -30,7 +30,7 @@
                             <div class="col-lg-6">
                                 <p class="card-text text-muted fw-bold fs-5"> Accound Status : <%= user.accountStatus %></p>
                                 <% if(userWallet) { %>
-                                <p class="card-text text-muted fw-bold fs-5">Wallet Balance : <%= userWallet.balance %></p>
+                                <p class="card-text text-muted fw-bold fs-5">Wallet Balance : <%= userWallet.balance.toFixed(2) %></p>
                                 <% } %>
                             </div>
                         </div>
