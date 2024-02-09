@@ -1,5 +1,5 @@
 const  User  = require("../models/user"); //user model
-const { GenerateOTP, verifiyOTP } = require("../config/OTPauth");
+const { GenerateOTP, verifiyOTP } = require("../config/otpAuth");
 const bcrypt = require("bcrypt");
 const dotenv = require("dotenv");
 const passport = require("passport");
